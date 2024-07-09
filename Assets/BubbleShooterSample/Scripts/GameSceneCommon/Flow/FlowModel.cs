@@ -24,6 +24,8 @@ namespace BubbleShooterSample
         public Vector2Int TileIndex { get; }
         public Vector2 TilePosition { get; }
         public FlowTileType TileType { get; }
+
+        void UpdateTileType(FlowTileType tileType);
     }
 
     public class FlowTileModel : IFlowTileModel
@@ -42,24 +44,27 @@ namespace BubbleShooterSample
             _tilePosition = tilePosition;
             _tileType = tileType;
         }
+
+        public void UpdateTileType(FlowTileType tileType)
+        {
+            _tileType = tileType;
+        }
     }
 
     public class FlowModel : MonoBehaviour
     {
         public event Action<IFlowTileModel> onFlowTileModelCreated;
+        public event Action<IFlowTileModel> onFlowTileModelSelected;
+        public event Action<IFlowTileModel> onFlowTileModelUpdated;
+        public event Action<Vector2Int> onFlowTileModelRemoved;
+        public event Action onFlowTileModelDeselected;
 
         private Dictionary<Vector2Int, IFlowTileModel> _flowTileModelDict;
+        private IFlowTileModel _selectedFlowTile;
 
         public void Init()
         {
             _flowTileModelDict = new();
-        }
-
-        internal void CreateFlowTile(Vector2Int index, Vector2 position, FlowTileType type)
-        {
-            IFlowTileModel flowTileModel = new FlowTileModel(index, position, type);
-            _flowTileModelDict.Add(index, flowTileModel);
-            onFlowTileModelCreated?.Invoke(flowTileModel);
         }
 
         internal string SaveLevelData()
@@ -85,8 +90,51 @@ namespace BubbleShooterSample
                 FlowSaveData saveData = JsonUtility.FromJson<FlowSaveData>(dataStr);
                 foreach (FlowTileSaveData flowTileSaveData in saveData.saveDataList)
                 {
+                    Debug.Log($"RestoreLevelData : {flowTileSaveData.Index}, {flowTileSaveData.Position}, {flowTileSaveData.TileType}");
                     CreateFlowTile(flowTileSaveData.Index, flowTileSaveData.Position, flowTileSaveData.TileType);
                 }
+            }
+        }
+
+        internal void CreateFlowTile(Vector2Int index, Vector2 position, FlowTileType type)
+        {
+            IFlowTileModel flowTileModel = new FlowTileModel(index, position, type);
+            _flowTileModelDict.Add(index, flowTileModel);
+            onFlowTileModelCreated?.Invoke(flowTileModel);
+        }
+
+        internal bool HasFlowTile(Vector2Int index)
+        {
+            return _flowTileModelDict.ContainsKey(index);
+        }
+
+        internal void SelectFlowTile(Vector2Int index)
+        {
+            _selectedFlowTile = _flowTileModelDict[index];
+            onFlowTileModelSelected?.Invoke(_selectedFlowTile);
+        }
+
+        internal void ChangeSelectedFlowTileType(FlowTileType tileType)
+        {
+            if (_selectedFlowTile != null)
+            {
+                _selectedFlowTile.UpdateTileType(tileType);
+                onFlowTileModelUpdated?.Invoke(_selectedFlowTile);
+            }
+        }
+
+        internal void RemoveFlowTile(Vector2Int index)
+        {
+            _flowTileModelDict.Remove(index);
+            onFlowTileModelRemoved?.Invoke(index);
+        }
+
+        internal void DeselectFlowTile()
+        {
+            if (_selectedFlowTile != null)
+            {
+                _selectedFlowTile = null;
+                onFlowTileModelDeselected?.Invoke();
             }
         }
     }
