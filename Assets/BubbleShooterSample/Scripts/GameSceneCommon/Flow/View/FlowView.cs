@@ -55,6 +55,7 @@ namespace BubbleShooterSample
         {
             if (_flowTilePositions.TryGetValue(tileIndex, out FlowTile flowTile))
             {
+                _flowTilePositions.Remove(tileIndex);
                 _flowTilePool.Release(flowTile);
             }
         }
