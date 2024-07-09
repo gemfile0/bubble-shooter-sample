@@ -2,7 +2,7 @@ namespace BubbleShooterSample
 {
     public enum FlowTileType
     {
-        Node,
-        Head,
+        Node = 0,
+        Head = 1,
     }
 }

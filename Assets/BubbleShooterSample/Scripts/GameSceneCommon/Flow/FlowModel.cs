@@ -10,7 +10,8 @@ namespace BubbleShooterSample
     {
         public Vector2Int Index;
         public Vector2 Position;
-        public FlowTileType TileType;
+        public FlowTileType Type;
+        public Color Color;
     }
 
     [Serializable]
@@ -24,6 +25,7 @@ namespace BubbleShooterSample
         public Vector2Int TileIndex { get; }
         public Vector2 TilePosition { get; }
         public FlowTileType TileType { get; }
+        public Color TileColor { get; }
 
         void UpdateTileType(FlowTileType tileType);
     }
@@ -33,16 +35,19 @@ namespace BubbleShooterSample
         public Vector2Int TileIndex => _tileIndex;
         public Vector2 TilePosition => _tilePosition;
         public FlowTileType TileType => _tileType;
+        public Color TileColor => _tileColor;
 
         private Vector2Int _tileIndex;
         private Vector2 _tilePosition;
         private FlowTileType _tileType;
+        private Color _tileColor;
 
-        public FlowTileModel(Vector2Int tileIndex, Vector2 tilePosition, FlowTileType tileType)
+        public FlowTileModel(Vector2Int tileIndex, Vector2 tilePosition, FlowTileType tileType, Color tileColor)
         {
             _tileIndex = tileIndex;
             _tilePosition = tilePosition;
             _tileType = tileType;
+            _tileColor = tileColor;
         }
 
         public void UpdateTileType(FlowTileType tileType)
@@ -76,7 +81,8 @@ namespace BubbleShooterSample
                     {
                         Index = flowTileModel.TileIndex,
                         Position = flowTileModel.TilePosition,
-                        TileType = flowTileModel.TileType
+                        Type = flowTileModel.TileType,
+                        Color = flowTileModel.TileColor
                     })
                     .ToList()
             };
@@ -90,15 +96,15 @@ namespace BubbleShooterSample
                 FlowSaveData saveData = JsonUtility.FromJson<FlowSaveData>(dataStr);
                 foreach (FlowTileSaveData flowTileSaveData in saveData.saveDataList)
                 {
-                    Debug.Log($"RestoreLevelData : {flowTileSaveData.Index}, {flowTileSaveData.Position}, {flowTileSaveData.TileType}");
-                    CreateFlowTile(flowTileSaveData.Index, flowTileSaveData.Position, flowTileSaveData.TileType);
+                    //Debug.Log($"RestoreLevelData : {flowTileSaveData.Index}, {flowTileSaveData.Position}, {flowTileSaveData.Type}, {flowTileSaveData.Color}");
+                    CreateFlowTile(flowTileSaveData.Index, flowTileSaveData.Position, flowTileSaveData.Type, flowTileSaveData.Color);
                 }
             }
         }
 
-        internal void CreateFlowTile(Vector2Int index, Vector2 position, FlowTileType type)
+        internal void CreateFlowTile(Vector2Int index, Vector2 position, FlowTileType type, Color color)
         {
-            IFlowTileModel flowTileModel = new FlowTileModel(index, position, type);
+            IFlowTileModel flowTileModel = new FlowTileModel(index, position, type, color);
             _flowTileModelDict.Add(index, flowTileModel);
             onFlowTileModelCreated?.Invoke(flowTileModel);
         }

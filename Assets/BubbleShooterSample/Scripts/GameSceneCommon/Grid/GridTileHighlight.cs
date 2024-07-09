@@ -20,7 +20,7 @@ namespace BubbleShooterSample
         }
         private Transform _cachedTransform;
 
-        public void UpdateEditingToolType(GridEditingToolType toolType)
+        public void UpdateEditingToolType(FlowEditingToolType toolType)
         {
             int toolIndex = (int)toolType;
             for (int i = 0; i < _spriteRendererList.Count; i++)

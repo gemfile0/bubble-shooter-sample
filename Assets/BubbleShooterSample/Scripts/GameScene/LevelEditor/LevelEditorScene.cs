@@ -10,7 +10,7 @@ namespace BubbleShooterSample
 
         public ILevelDataManager LevelDataManager { private get; set; }
 
-        private void Awake()
+        private void Start()
         {
             SetCameraPosition();
             LevelDataManager.RestoreLevelData();

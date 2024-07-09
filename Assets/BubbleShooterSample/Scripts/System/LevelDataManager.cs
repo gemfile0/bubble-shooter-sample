@@ -148,6 +148,7 @@ namespace BubbleShooterSample.System
                 {
                     if (levelData.SaveDataList[i].ID == levelDataId)
                     {
+                        dataExists = true;
                         levelData.SaveDataList[i] = new SaveData
                         {
                             ID = levelDataId,
