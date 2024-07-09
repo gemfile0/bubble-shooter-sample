@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace BubbleShooterSample
 {
-    public class GridManager : MonoBehaviour
+    public class GridView : MonoBehaviour
     {
-        [SerializeField] private Grid _gridPrefab;
+        [SerializeField] private GridTile _gridPrefab;
         [SerializeField] private int _rowCount = 9;
         [SerializeField] private int _columnCount = 10;
         [SerializeField] private float _gridRadius = 0.5f;
@@ -39,6 +39,19 @@ namespace BubbleShooterSample
         }
         private float _verticalSpacing;
 
+        private Transform CachedTransform
+        {
+            get
+            {
+                if (_cachedTransform == null)
+                {
+                    _cachedTransform = transform;
+                }
+                return _cachedTransform;
+            }
+        }
+        private Transform _cachedTransform;
+
         private List<Vector2> _gridPositions = new List<Vector2>();
 
         void Start()
@@ -66,7 +79,7 @@ namespace BubbleShooterSample
                     Vector2 position = new Vector2(xPos, yPos);
                     _gridPositions.Add(position);
 
-                    Grid grid = Instantiate(_gridPrefab, position, Quaternion.identity, transform);
+                    GridTile grid = Instantiate(_gridPrefab, position, Quaternion.identity, CachedTransform);
                     grid.Init(new Vector2(col, row));
                 }
             }

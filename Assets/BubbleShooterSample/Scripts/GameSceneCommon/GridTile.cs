@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BubbleShooterSample
 {
-    public class Grid : MonoBehaviour
+    public class GridTile : MonoBehaviour
     {
         [SerializeField] private TextMeshPro _indexText;
 
