@@ -6,6 +6,7 @@ namespace BubbleShooterSample
     public class FlowTile : MonoBehaviour
     {
         [SerializeField] private TextMeshPro _typeText;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
 
         public Transform CachedTransform
         {
@@ -26,12 +27,21 @@ namespace BubbleShooterSample
         public Vector2Int TileIndex => _tileIndex;
         private Vector2Int _tileIndex;
 
-        public void Init(Vector2Int tileIndex, FlowTileType tileType)
+        private Color _tileColor;
+
+        public void Init(Vector2Int tileIndex, FlowTileType tileType, Color tileColor)
         {
             _tileIndex = tileIndex;
             _tileType = tileType;
+            _tileColor = tileColor;
 
             UpdateTypeText();
+            UpdateSpriteRendererColor();
+        }
+
+        private void UpdateSpriteRendererColor()
+        {
+            _spriteRenderer.color = _tileColor;
         }
 
         public void UpdateTileType(FlowTileType tileType)

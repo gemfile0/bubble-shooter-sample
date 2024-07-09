@@ -9,12 +9,25 @@ namespace BubbleShooterSample
 {
     public class FlowTileEditingUI : MonoBehaviour
     {
-        [SerializeField] private GameObject _dropdownPanelObject;
-        [SerializeField] private TMP_Dropdown _flowTileTypeDropdown;
+        [Header("Color Picker")]
+        [SerializeField] private FlowTileColorPicker _flowTileColorPicker;
+
+        [Header("Tool Toggle")]
         [SerializeField] private List<Toggle> _toolToggleList;
 
+        [Header("Tile Type Dropdown")]
+        [SerializeField] private GameObject _dropdownPanelObject;
+        [SerializeField] private TMP_Dropdown _flowTileTypeDropdown;
+
+        public Color PickedColor => _flowTileColorPicker.PickedColor;
+
+        public event Action<Color> onColorPicked
+        {
+            add { _flowTileColorPicker.onColorPicked += value; }
+            remove { _flowTileColorPicker.onColorPicked -= value; }
+        }
         public event Action<FlowTileType> onFlowTileTypeChanged;
-        public event Action<GridEditingToolType> onFlowEditingToolChanged;
+        public event Action<FlowEditingToolType> onFlowEditingToolChanged;
 
         private void Awake()
         {
@@ -23,12 +36,12 @@ namespace BubbleShooterSample
 
         private void Start()
         {
-            _dropdownPanelObject.SetActive(false);
+            UpdateTileTypeObject(false);
         }
 
-        public void SetActive()
+        private void OnColorPicked(Color color)
         {
-            _dropdownPanelObject.SetActive(true);
+
         }
 
         public void OnDropdownValueChanged(int index)
@@ -40,18 +53,15 @@ namespace BubbleShooterSample
         {
             if (value)
             {
-                int selectedIndex = -1;
-                for (int i = 0; i < _toolToggleList.Count; i++)
+                int selectedIndex = _toolToggleList.FindIndex(toggle => toggle.isOn);
+                if (selectedIndex != -1)
                 {
-                    Toggle toggle = _toolToggleList[i];
-                    if (toggle.isOn)
-                    {
-                        selectedIndex = i;
-                        break;
-                    }
+                    onFlowEditingToolChanged?.Invoke((FlowEditingToolType)selectedIndex);
                 }
-
-                onFlowEditingToolChanged?.Invoke((GridEditingToolType)selectedIndex);
+                else
+                {
+                    Debug.LogWarning($"인덱스를 찾지 못했습니다.");
+                }
             }
         }
 
@@ -60,10 +70,20 @@ namespace BubbleShooterSample
             onFlowTileTypeChanged?.Invoke((FlowTileType)_flowTileTypeDropdown.value);
         }
 
-        internal void UpdateToolType(GridEditingToolType toolType)
+        internal void UpdateToolType(FlowEditingToolType toolType)
         {
             int toolIndex = (int)toolType;
             _toolToggleList[toolIndex].isOn = true;
+        }
+
+        internal void UpdateTileType(FlowTileType tileType)
+        {
+            _flowTileTypeDropdown.SetValueWithoutNotify((int)tileType);
+        }
+
+        public void UpdateTileTypeObject(bool value)
+        {
+            _dropdownPanelObject.SetActive(value);
         }
     }
 }

@@ -11,13 +11,13 @@ namespace BubbleShooterSample
 
         private GridTileHighlight _highlight;
         private IEnumerable<IGridTile> _gridTileList;
-        private GridEditingToolType _toolType;
+        private FlowEditingToolType _toolType;
 
         private void Start()
         {
             _gridTileList = _gridView.GridTileList;
             _highlight = Instantiate(_highlightPrefab, Vector3.zero, Quaternion.identity, transform);
-            _flowPresenter.UpdateToolType(GridEditingToolType.Add);
+            _flowPresenter.UpdateToolType(FlowEditingToolType.Add);
         }
 
         private void OnEnable()
@@ -30,7 +30,7 @@ namespace BubbleShooterSample
             _flowPresenter.onFlowEditingToolChanged -= OnFlowEditingToolChanged;
         }
 
-        private void OnFlowEditingToolChanged(GridEditingToolType toolType)
+        private void OnFlowEditingToolChanged(FlowEditingToolType toolType)
         {
             _toolType = toolType;
             _highlight?.UpdateEditingToolType(_toolType);
@@ -49,7 +49,7 @@ namespace BubbleShooterSample
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    if (_toolType == GridEditingToolType.Add)
+                    if (_toolType == FlowEditingToolType.Add)
                     {
                         if (_flowPresenter.HasFlowTile(closestTileGrid.Index) == false)
                         {
@@ -57,7 +57,7 @@ namespace BubbleShooterSample
                         }
                         _flowPresenter.SelectFlowTile(closestTileGrid.Index);
                     }
-                    else if (_toolType == GridEditingToolType.Remove)
+                    else if (_toolType == FlowEditingToolType.Remove)
                     {
                         if (_flowPresenter.HasFlowTile(closestTileGrid.Index))
                         {

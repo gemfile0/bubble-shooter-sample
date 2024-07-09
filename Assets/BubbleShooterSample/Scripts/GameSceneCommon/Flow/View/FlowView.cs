@@ -34,16 +34,16 @@ namespace BubbleShooterSample
             );
         }
 
-        public void CreateFlowTile(Vector2Int tileIndex, Vector2 tilePosition, FlowTileType tileType)
+        public void CreateFlowTile(Vector2Int tileIndex, Vector2 tilePosition, FlowTileType tileType, Color tileColor)
         {
             FlowTile flowTile = _flowTilePool.Get();
             flowTile.CachedTransform.SetParent(CachedTransform);
             flowTile.CachedTransform.position = tilePosition;
-            flowTile.Init(tileIndex, tileType);
+            flowTile.Init(tileIndex, tileType, tileColor);
             _flowTilePositions.Add(tileIndex, flowTile);
         }
 
-        internal void UpdateFlowTile(Vector2Int tileIndex, Vector2 tilePosition, FlowTileType tileType)
+        internal void UpdateFlowTileType(Vector2Int tileIndex, Vector2 tilePosition, FlowTileType tileType)
         {
             if (_flowTilePositions.TryGetValue(tileIndex, out FlowTile flowTile))
             {
@@ -57,6 +57,11 @@ namespace BubbleShooterSample
             {
                 _flowTilePool.Release(flowTile);
             }
+        }
+
+        internal void UpdateFlowTileColor(Color color)
+        {
+
         }
     }
 }

@@ -14,16 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <SaveDataList>k__BackingField:
   - ID: 0
-    Data: '{"saveDataList":[{"Index":{"x":9,"y":0},"Position":{"x":7.794228553771973,"y":0.0},"TileType":1},{"Index":{"x":8,"y":0},"Position":{"x":6.928203105926514,"y":0.0},"TileType":0}]}'
-  - ID: 0
-    Data: '{"saveDataList":[{"Index":{"x":9,"y":0},"Position":{"x":7.794228553771973,"y":0.0},"TileType":1}]}'
-  - ID: 0
-    Data: '{"saveDataList":[{"Index":{"x":9,"y":0},"Position":{"x":7.794228553771973,"y":0.0},"TileType":0}]}'
-  - ID: 0
-    Data: '{"saveDataList":[{"Index":{"x":9,"y":0},"Position":{"x":7.794228553771973,"y":0.0},"TileType":1}]}'
-  - ID: 0
-    Data: '{"saveDataList":[{"Index":{"x":9,"y":0},"Position":{"x":7.794228553771973,"y":0.0},"TileType":1},{"Index":{"x":8,"y":0},"Position":{"x":6.928203105926514,"y":0.0},"TileType":0}]}'
-  - ID: 0
-    Data: '{"saveDataList":[{"Index":{"x":9,"y":0},"Position":{"x":7.794228553771973,"y":0.0},"TileType":1},{"Index":{"x":8,"y":0},"Position":{"x":6.928203105926514,"y":0.0},"TileType":0},{"Index":{"x":7,"y":0},"Position":{"x":6.062177658081055,"y":0.0},"TileType":0}]}'
-  - ID: 0
-    Data: '{"saveDataList":[{"Index":{"x":9,"y":0},"Position":{"x":7.794228553771973,"y":0.0},"TileType":1},{"Index":{"x":8,"y":0},"Position":{"x":6.928203105926514,"y":0.0},"TileType":0}]}'
+    Data: '{"saveDataList":[{"Index":{"x":2,"y":7},"Position":{"x":2.1650633811950685,"y":5.25},"Type":0,"Color":{"r":0.08627451211214066,"g":0.6352941393852234,"b":0.6352941393852234,"a":1.0}},{"Index":{"x":6,"y":7},"Position":{"x":5.629165172576904,"y":5.25},"Type":0,"Color":{"r":0.6352941393852234,"g":0.08627451211214066,"b":0.6352941393852234,"a":1.0}}]}'

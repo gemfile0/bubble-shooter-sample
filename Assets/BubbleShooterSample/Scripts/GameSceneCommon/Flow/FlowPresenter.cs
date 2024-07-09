@@ -10,12 +10,12 @@ namespace BubbleShooterSample
     {
         [SerializeField] private FlowModel _flowModel;
         [SerializeField] private FlowView _flowView;
-        [SerializeField] private FlowTileEditingUI _flowEditingUI;
+        [SerializeField] private FlowTileEditingUI _flowTileEditingUI;
 
-        public event Action<GridEditingToolType> onFlowEditingToolChanged
+        public event Action<FlowEditingToolType> onFlowEditingToolChanged
         {
-            add { _flowEditingUI.onFlowEditingToolChanged += value; }
-            remove { _flowEditingUI.onFlowEditingToolChanged -= value; }
+            add { _flowTileEditingUI.onFlowEditingToolChanged += value; }
+            remove { _flowTileEditingUI.onFlowEditingToolChanged -= value; }
         }
 
         public ILevelDataManager LevelDataManager { private get; set; }
@@ -31,30 +31,40 @@ namespace BubbleShooterSample
         {
             _flowModel.onFlowTileModelCreated += OnFlowTileModelCreated;
             _flowModel.onFlowTileModelSelected += OnFlowTileModelSelected;
+            _flowModel.onFlowTileModelDeselected += OnFlowTileModelDeselected;
             _flowModel.onFlowTileModelUpdated += OnFlowTileModelUpdated;
             _flowModel.onFlowTileModelRemoved += OnFlowTileModelRemoved;
 
-            _flowEditingUI.onFlowTileTypeChanged += _flowModel.ChangeSelectedFlowTileType;
+            _flowTileEditingUI.onFlowTileTypeChanged += _flowModel.ChangeSelectedFlowTileType;
+            _flowTileEditingUI.onColorPicked += _flowView.UpdateFlowTileColor;
         }
 
         private void OnDisable()
         {
             _flowModel.onFlowTileModelCreated -= OnFlowTileModelCreated;
             _flowModel.onFlowTileModelSelected -= OnFlowTileModelSelected;
+            _flowModel.onFlowTileModelDeselected -= OnFlowTileModelDeselected;
             _flowModel.onFlowTileModelUpdated -= OnFlowTileModelUpdated;
             _flowModel.onFlowTileModelRemoved -= OnFlowTileModelRemoved;
 
-            _flowEditingUI.onFlowTileTypeChanged -= _flowModel.ChangeSelectedFlowTileType;
+            _flowTileEditingUI.onFlowTileTypeChanged -= _flowModel.ChangeSelectedFlowTileType;
+            _flowTileEditingUI.onColorPicked -= _flowView.UpdateFlowTileColor;
         }
 
         private void OnFlowTileModelSelected(IFlowTileModel model)
         {
-            _flowEditingUI.SetActive();
+            _flowTileEditingUI.UpdateTileTypeObject(true);
+            _flowTileEditingUI.UpdateTileType(model.TileType);
+        }
+
+        private void OnFlowTileModelDeselected()
+        {
+            _flowTileEditingUI.UpdateTileTypeObject(false);
         }
 
         private void OnFlowTileModelCreated(IFlowTileModel model)
         {
-            _flowView.CreateFlowTile(model.TileIndex, model.TilePosition, model.TileType);
+            _flowView.CreateFlowTile(model.TileIndex, model.TilePosition, model.TileType, model.TileColor);
         }
 
         private void OnFlowTileModelRemoved(Vector2Int tileIndex)
@@ -64,14 +74,14 @@ namespace BubbleShooterSample
 
         private void OnFlowTileModelUpdated(IFlowTileModel model)
         {
-            _flowView.UpdateFlowTile(model.TileIndex, model.TilePosition, model.TileType);
+            _flowView.UpdateFlowTileType(model.TileIndex, model.TilePosition, model.TileType);
 
             LevelDataManager.SaveSpecificLevelData(LevelDataId.Flow);
         }
 
         internal void CreateFlowTile(Vector2Int index, Vector2 position, FlowTileType type)
         {
-            _flowModel.CreateFlowTile(index, position, type);
+            _flowModel.CreateFlowTile(index, position, type, _flowTileEditingUI.PickedColor);
 
             LevelDataManager.SaveSpecificLevelData(LevelDataId.Flow);
         }
@@ -104,9 +114,9 @@ namespace BubbleShooterSample
             LevelDataManager.SaveSpecificLevelData(LevelDataId.Flow);
         }
 
-        internal void UpdateToolType(GridEditingToolType toolType)
+        internal void UpdateToolType(FlowEditingToolType toolType)
         {
-            _flowEditingUI.UpdateToolType(toolType);
+            _flowTileEditingUI.UpdateToolType(toolType);
         }
     }
 }
