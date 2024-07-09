@@ -52,15 +52,21 @@ namespace BubbleShooterSample
         }
         private Transform _cachedTransform;
 
-        private List<Vector2> _gridPositions = new List<Vector2>();
+        public IEnumerable<IGridTile> GridTileList
+        {
+            get => _gridTileList;
+        }
+        private List<IGridTile> _gridTileList;
 
-        void Start()
+        void Awake()
         {
             CreateGrid();
         }
 
         void CreateGrid()
         {
+            _gridTileList = new List<IGridTile>();
+
             float horizontalSpacing = HorizontalSpacing;
             float horizontalSpacingHalf = horizontalSpacing / 2f;
             float verticalSpacing = VerticalSpacing;
@@ -76,18 +82,14 @@ namespace BubbleShooterSample
                     float xPos = col * horizontalSpacing + xOffset;
                     float yPos = row * verticalSpacing;
 
+                    Vector2Int index = new Vector2Int(col, row);
                     Vector2 position = new Vector2(xPos, yPos);
-                    _gridPositions.Add(position);
 
-                    GridTile grid = Instantiate(_gridPrefab, position, Quaternion.identity, CachedTransform);
-                    grid.Init(new Vector2(col, row));
+                    GridTile gridTile = Instantiate(_gridPrefab, position, Quaternion.identity, CachedTransform);
+                    gridTile.Init(index, position);
+                    _gridTileList.Add(gridTile);
                 }
             }
-        }
-
-        public List<Vector2> GetGridPositions()
-        {
-            return _gridPositions;
         }
     }
 }

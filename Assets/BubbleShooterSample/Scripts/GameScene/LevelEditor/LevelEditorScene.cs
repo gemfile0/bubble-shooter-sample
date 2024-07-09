@@ -1,15 +1,19 @@
+using BubbleShooterSample.System;
 using UnityEngine;
 
 namespace BubbleShooterSample
 {
-    public class LevelEditorScene : MonoBehaviour
+    public class LevelEditorScene : MonoBehaviour, ILevelDataManagerSetter
     {
         [SerializeField] private Camera _mainCamera;
         [SerializeField] private GridView _gridManager;
 
+        public ILevelDataManager LevelDataManager { private get; set; }
+
         private void Awake()
         {
             SetCameraPosition();
+            LevelDataManager.RestoreLevelData();
         }
 
         private void SetCameraPosition()

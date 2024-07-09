@@ -28,10 +28,5 @@ namespace BubbleShooterSample
             flowTile.Init(tileType);
             _flowTilePositions.Add(position);
         }
-
-        public List<Vector2> GetFlowTilePositions()
-        {
-            return _flowTilePositions;
-        }
     }
 }
