@@ -10,7 +10,7 @@ namespace BubbleShooterSample
 
         public ILevelDataManager LevelDataManager { private get; set; }
 
-        private void Start()
+        protected virtual void Start()
         {
             SetCameraPosition();
             LevelDataManager.RestoreLevelData();

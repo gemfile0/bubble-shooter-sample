@@ -54,18 +54,22 @@ namespace BubbleShooterSample
 
         public IEnumerable<IGridTile> GridTileList
         {
-            get => _gridTileList;
+            get => _gridTileDict.Values;
         }
-        private List<IGridTile> _gridTileList;
+        private Dictionary<Vector2Int, IGridTile> _gridTileDict;
+
+        private List<Vector2Int> neighborIndexList;
 
         void Awake()
         {
+            _gridTileDict = new();
+            neighborIndexList = new();
+
             CreateGrid();
         }
 
         void CreateGrid()
         {
-            _gridTileList = new List<IGridTile>();
 
             float horizontalSpacing = HorizontalSpacing;
             float horizontalSpacingHalf = horizontalSpacing / 2f;
@@ -82,13 +86,43 @@ namespace BubbleShooterSample
                     float xPos = col * horizontalSpacing + xOffset;
                     float yPos = row * verticalSpacing;
 
-                    Vector2Int index = new Vector2Int(col, row);
-                    Vector2 position = new Vector2(xPos, yPos);
+                    Vector2Int tileIndex = new Vector2Int(col, row);
+                    Vector2 tilePosition = new Vector2(xPos, yPos);
 
-                    GridTile gridTile = Instantiate(_gridPrefab, position, Quaternion.identity, CachedTransform);
-                    gridTile.Init(index, position);
-                    _gridTileList.Add(gridTile);
+                    GridTile gridTile = Instantiate(_gridPrefab, tilePosition, Quaternion.identity, CachedTransform);
+                    gridTile.Init(tileIndex, tilePosition);
+                    _gridTileDict.Add(tileIndex, gridTile);
                 }
+            }
+        }
+
+        public IEnumerable<Vector2Int> GetNeighborIndexList(Vector2Int tileIndex)
+        {
+            neighborIndexList.Clear();
+            AddIfExists(new Vector2Int(tileIndex.x - 1, tileIndex.y));  // left
+            AddIfExists(new Vector2Int(tileIndex.x + 1, tileIndex.y));  // right
+            AddIfExists(new Vector2Int(tileIndex.x, tileIndex.y - 1));  // bottom
+            AddIfExists(new Vector2Int(tileIndex.x, tileIndex.y + 1));  // top
+
+            if (tileIndex.y % 2 == 0)
+            {
+                AddIfExists(new Vector2Int(tileIndex.x - 1, tileIndex.y - 1)); // bottom-left
+                AddIfExists(new Vector2Int(tileIndex.x - 1, tileIndex.y + 1)); // top-left
+            }
+            else
+            {
+                AddIfExists(new Vector2Int(tileIndex.x + 1, tileIndex.y - 1)); // bottom-right
+                AddIfExists(new Vector2Int(tileIndex.x + 1, tileIndex.y + 1)); // top-right
+            }
+
+            return neighborIndexList;
+        }
+
+        private void AddIfExists(Vector2Int tileIndex)
+        {
+            if (_gridTileDict.ContainsKey(tileIndex))
+            {
+                neighborIndexList.Add(tileIndex);
             }
         }
     }
