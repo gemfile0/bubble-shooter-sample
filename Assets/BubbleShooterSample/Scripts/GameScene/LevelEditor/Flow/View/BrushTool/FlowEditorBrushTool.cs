@@ -1,23 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelEditor
 {
-    public class FlowEditingTool : MonoBehaviour
+    public class FlowEditorBrushTool : MonoBehaviour
     {
-        [SerializeField] private GridTileHighlight _highlightPrefab;
+        [SerializeField] private FlowEditorBrush _brushPrefab;
         [SerializeField] private GridView _gridView;
-        [SerializeField] private FlowPresenter _flowPresenter;
+        [SerializeField] private FlowEditorPresenter _flowPresenter;
 
-        private GridTileHighlight _highlight;
+        private FlowEditorBrush _highlight;
         private IEnumerable<IGridTile> _gridTileList;
-        private FlowEditingToolType _toolType;
+        private FlowEditorBrushToolType _toolType;
 
         private void Start()
         {
             _gridTileList = _gridView.GridTileList;
-            _highlight = Instantiate(_highlightPrefab, Vector3.zero, Quaternion.identity, transform);
-            _flowPresenter.UpdateToolType(FlowEditingToolType.Add);
+            _highlight = Instantiate(_brushPrefab, Vector3.zero, Quaternion.identity, transform);
+            _flowPresenter.UpdateToolType(FlowEditorBrushToolType.Add);
         }
 
         private void OnEnable()
@@ -30,7 +30,7 @@ namespace BubbleShooterSample
             _flowPresenter.onFlowEditingToolChanged -= OnFlowEditingToolChanged;
         }
 
-        private void OnFlowEditingToolChanged(FlowEditingToolType toolType)
+        private void OnFlowEditingToolChanged(FlowEditorBrushToolType toolType)
         {
             _toolType = toolType;
             _highlight?.UpdateEditingToolType(_toolType);
@@ -49,7 +49,7 @@ namespace BubbleShooterSample
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    if (_toolType == FlowEditingToolType.Add)
+                    if (_toolType == FlowEditorBrushToolType.Add)
                     {
                         if (_flowPresenter.HasFlowTile(closestTileGrid.Index) == false)
                         {
@@ -57,7 +57,7 @@ namespace BubbleShooterSample
                         }
                         _flowPresenter.SelectFlowTile(closestTileGrid.Index);
                     }
-                    else if (_toolType == FlowEditingToolType.Remove)
+                    else if (_toolType == FlowEditorBrushToolType.Remove)
                     {
                         if (_flowPresenter.HasFlowTile(closestTileGrid.Index))
                         {

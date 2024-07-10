@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelEditor
 {
-    public class GridTileHighlight : MonoBehaviour
+    public class FlowEditorBrush : MonoBehaviour
     {
         [SerializeField] private List<SpriteRenderer> _spriteRendererList;
 
@@ -20,7 +20,7 @@ namespace BubbleShooterSample
         }
         private Transform _cachedTransform;
 
-        public void UpdateEditingToolType(FlowEditingToolType toolType)
+        public void UpdateEditingToolType(FlowEditorBrushToolType toolType)
         {
             int toolIndex = (int)toolType;
             for (int i = 0; i < _spriteRendererList.Count; i++)

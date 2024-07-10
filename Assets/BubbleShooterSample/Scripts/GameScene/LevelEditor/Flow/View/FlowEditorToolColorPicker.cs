@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelEditor
 {
-    public class FlowTileColorPicker : MonoBehaviour
+    public class FlowEditorToolColorPicker : MonoBehaviour
     {
         [SerializeField] private GameObject _colorPickerPaletteObject;
         [SerializeField] private List<Toggle> _colorPickerToggleList;

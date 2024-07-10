@@ -2,17 +2,17 @@ using BubbleShooterSample.System;
 using System;
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelEditor
 {
-    public class FlowPresenter : MonoBehaviour,
+    public class FlowEditorPresenter : MonoBehaviour,
         ILevelDataManagerSetter,
         ILevelSavable
     {
-        [SerializeField] private FlowModel _flowModel;
-        [SerializeField] private FlowView _flowView;
-        [SerializeField] private FlowTileEditingUI _flowTileEditingUI;
+        [SerializeField] private FlowEditorModel _flowModel;
+        [SerializeField] private FlowEditorView _flowView;
+        [SerializeField] private FlowEditorToolUI _flowTileEditingUI;
 
-        public event Action<FlowEditingToolType> onFlowEditingToolChanged
+        public event Action<FlowEditorBrushToolType> onFlowEditingToolChanged
         {
             add { _flowTileEditingUI.onFlowEditingToolChanged += value; }
             remove { _flowTileEditingUI.onFlowEditingToolChanged -= value; }
@@ -114,7 +114,7 @@ namespace BubbleShooterSample
             LevelDataManager.SaveSpecificLevelData(LevelDataId.Flow);
         }
 
-        internal void UpdateToolType(FlowEditingToolType toolType)
+        internal void UpdateToolType(FlowEditorBrushToolType toolType)
         {
             _flowTileEditingUI.UpdateToolType(toolType);
         }

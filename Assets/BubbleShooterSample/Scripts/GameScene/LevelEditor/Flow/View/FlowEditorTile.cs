@@ -1,9 +1,9 @@
 using TMPro;
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelEditor
 {
-    public class FlowTile : MonoBehaviour
+    public class FlowEditorTile : MonoBehaviour
     {
         [SerializeField] private TextMeshPro _typeText;
         [SerializeField] private SpriteRenderer _spriteRenderer;

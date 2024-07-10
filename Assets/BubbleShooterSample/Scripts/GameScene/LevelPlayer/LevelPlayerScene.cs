@@ -1,9 +1,7 @@
-using UnityEngine;
-
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelPlayer
 {
-    public class LevelPlayerScene : MonoBehaviour
+    public class LevelPlayerScene : BaseLevelScene
     {
-    
+
     }
 }

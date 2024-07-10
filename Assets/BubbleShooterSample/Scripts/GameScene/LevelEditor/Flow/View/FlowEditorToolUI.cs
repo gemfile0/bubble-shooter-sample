@@ -5,12 +5,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelEditor
 {
-    public class FlowTileEditingUI : MonoBehaviour
+    public class FlowEditorToolUI : MonoBehaviour
     {
         [Header("Color Picker")]
-        [SerializeField] private FlowTileColorPicker _flowTileColorPicker;
+        [SerializeField] private FlowEditorToolColorPicker _flowTileColorPicker;
 
         [Header("Tool Toggle")]
         [SerializeField] private List<Toggle> _toolToggleList;
@@ -27,7 +27,7 @@ namespace BubbleShooterSample
             remove { _flowTileColorPicker.onColorPicked -= value; }
         }
         public event Action<FlowTileType> onFlowTileTypeChanged;
-        public event Action<FlowEditingToolType> onFlowEditingToolChanged;
+        public event Action<FlowEditorBrushToolType> onFlowEditingToolChanged;
 
         private void Awake()
         {
@@ -56,7 +56,7 @@ namespace BubbleShooterSample
                 int selectedIndex = _toolToggleList.FindIndex(toggle => toggle.isOn);
                 if (selectedIndex != -1)
                 {
-                    onFlowEditingToolChanged?.Invoke((FlowEditingToolType)selectedIndex);
+                    onFlowEditingToolChanged?.Invoke((FlowEditorBrushToolType)selectedIndex);
                 }
                 else
                 {
@@ -70,7 +70,7 @@ namespace BubbleShooterSample
             onFlowTileTypeChanged?.Invoke((FlowTileType)_flowTileTypeDropdown.value);
         }
 
-        internal void UpdateToolType(FlowEditingToolType toolType)
+        internal void UpdateToolType(FlowEditorBrushToolType toolType)
         {
             int toolIndex = (int)toolType;
             _toolToggleList[toolIndex].isOn = true;

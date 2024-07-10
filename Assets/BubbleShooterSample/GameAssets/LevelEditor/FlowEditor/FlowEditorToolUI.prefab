@@ -2133,7 +2133,7 @@ GameObject:
   - component: {fileID: 758397108629805407}
   - component: {fileID: 1496588320072840739}
   m_Layer: 5
-  m_Name: FlowTileEditingUI
+  m_Name: FlowEditorToolUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

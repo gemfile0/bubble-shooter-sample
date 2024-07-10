@@ -181,7 +181,7 @@ GameObject:
   - component: {fileID: 150972229}
   - component: {fileID: 150972228}
   m_Layer: 0
-  m_Name: Flow
+  m_Name: FlowEditor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -202,6 +202,7 @@ Transform:
   m_Children:
   - {fileID: 1324806873}
   - {fileID: 683106308}
+  - {fileID: 963629178}
   m_Father: {fileID: 318222677}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &150972228
@@ -309,7 +310,6 @@ Transform:
   - {fileID: 12685282}
   - {fileID: 1319464367}
   - {fileID: 150972227}
-  - {fileID: 963629178}
   - {fileID: 1083673443}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -830,7 +830,7 @@ GameObject:
   - component: {fileID: 963629179}
   - component: {fileID: 963629180}
   m_Layer: 0
-  m_Name: FlowEditingTool
+  m_Name: FlowEditorBrushTool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -849,7 +849,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 318222677}
+  m_Father: {fileID: 150972227}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &963629179
 MonoBehaviour:
@@ -863,7 +863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 768bbd39b7d6bb44590a51a31d967d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _highlightPrefab: {fileID: 993842579087498621, guid: 1ecb4eb50bdfbf74db959ecd5eee877b, type: 3}
+  _brushPrefab: {fileID: 993842579087498621, guid: 1ecb4eb50bdfbf74db959ecd5eee877b, type: 3}
   _gridView: {fileID: 1543698206}
   _flowPresenter: {fileID: 150972229}
 --- !u!210 &963629180
@@ -971,7 +971,7 @@ GameObject:
   - component: {fileID: 1324806874}
   - component: {fileID: 1324806875}
   m_Layer: 0
-  m_Name: FlowView
+  m_Name: FlowEditorView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1325,7 +1325,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 763348608035659360, guid: b36fa481a448d354d97d2a22b05d55c1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000022888184
+      value: -0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 1565458787128092114, guid: b36fa481a448d354d97d2a22b05d55c1, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1489,7 +1489,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7998734262503323425, guid: b36fa481a448d354d97d2a22b05d55c1, type: 3}
       propertyPath: m_Name
-      value: FlowTileEditingUI
+      value: FlowEditorToolUI
       objectReference: {fileID: 0}
     - target: {fileID: 8366858784132637192, guid: b36fa481a448d354d97d2a22b05d55c1, type: 3}
       propertyPath: m_TargetGraphic

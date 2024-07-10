@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelEditor
 {
     [Serializable]
     public class FlowTileSaveData
@@ -56,7 +56,7 @@ namespace BubbleShooterSample
         }
     }
 
-    public class FlowModel : MonoBehaviour
+    public class FlowEditorModel : MonoBehaviour
     {
         public event Action<IFlowTileModel> onFlowTileModelCreated;
         public event Action<IFlowTileModel> onFlowTileModelSelected;

@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 6439543398199701227}
   - component: {fileID: 993842579087498621}
   m_Layer: 0
-  m_Name: GridTileHighlight
+  m_Name: FlowEditorBrush
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

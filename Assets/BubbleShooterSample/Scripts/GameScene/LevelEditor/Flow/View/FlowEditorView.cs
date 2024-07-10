@@ -2,11 +2,11 @@ using BubbleShooterSample.Helper;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelEditor
 {
-    public class FlowView : MonoBehaviour
+    public class FlowEditorView : MonoBehaviour
     {
-        [SerializeField] private FlowTile _flowTilePrefab;
+        [SerializeField] private FlowEditorTile _flowTilePrefab;
 
         private Transform CachedTransform
         {
@@ -21,13 +21,13 @@ namespace BubbleShooterSample
         }
         private Transform _cachedTransform;
 
-        private Dictionary<Vector2Int, FlowTile> _flowTilePositions;
-        private GameObjectPool<FlowTile> _flowTilePool;
+        private Dictionary<Vector2Int, FlowEditorTile> _flowTilePositions;
+        private GameObjectPool<FlowEditorTile> _flowTilePool;
 
         private void Awake()
         {
-            _flowTilePositions = new Dictionary<Vector2Int, FlowTile>();
-            _flowTilePool = new GameObjectPool<FlowTile>(
+            _flowTilePositions = new Dictionary<Vector2Int, FlowEditorTile>();
+            _flowTilePool = new GameObjectPool<FlowEditorTile>(
                 CachedTransform,
                 _flowTilePrefab.gameObject,
                 defaultCapacity: 20
@@ -36,7 +36,7 @@ namespace BubbleShooterSample
 
         public void CreateFlowTile(Vector2Int tileIndex, Vector2 tilePosition, FlowTileType tileType, Color tileColor)
         {
-            FlowTile flowTile = _flowTilePool.Get();
+            FlowEditorTile flowTile = _flowTilePool.Get();
             flowTile.CachedTransform.SetParent(CachedTransform);
             flowTile.CachedTransform.position = tilePosition;
             flowTile.Init(tileIndex, tileType, tileColor);
@@ -45,7 +45,7 @@ namespace BubbleShooterSample
 
         internal void UpdateFlowTileType(Vector2Int tileIndex, Vector2 tilePosition, FlowTileType tileType)
         {
-            if (_flowTilePositions.TryGetValue(tileIndex, out FlowTile flowTile))
+            if (_flowTilePositions.TryGetValue(tileIndex, out FlowEditorTile flowTile))
             {
                 flowTile.UpdateTileType(tileType);
             }
@@ -53,7 +53,7 @@ namespace BubbleShooterSample
 
         internal void RemoveFlowTile(Vector2Int tileIndex)
         {
-            if (_flowTilePositions.TryGetValue(tileIndex, out FlowTile flowTile))
+            if (_flowTilePositions.TryGetValue(tileIndex, out FlowEditorTile flowTile))
             {
                 _flowTilePositions.Remove(tileIndex);
                 _flowTilePool.Release(flowTile);
