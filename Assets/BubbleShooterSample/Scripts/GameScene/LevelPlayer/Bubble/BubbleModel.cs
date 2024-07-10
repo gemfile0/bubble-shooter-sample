@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace BubbleShooterSample
@@ -76,12 +77,17 @@ namespace BubbleShooterSample
         {
             _colorTileListDict = colorTileListDict;
 
-            while (IsAllTileFilled() == false && _currentTurn < MaxTurns)
+            int expectedCount = colorTileListDict.First().Value.Count - 1;
+            while (IsAllTileFilled(expectedCount) == false && _currentTurn < MaxTurns)
             {
-                ProcessTurn();
+                ProcessTurn(withNewBubbles: true);
             }
 
-            if (_currentTurn >= MaxTurns)
+            if (_currentTurn < MaxTurns)
+            {
+                ProcessTurn(withNewBubbles: false);
+            }
+            else
             {
                 Debug.LogWarning("최대 턴 수에 도달했습니다.");
             }
@@ -89,16 +95,16 @@ namespace BubbleShooterSample
             // 첫 번째 BubbleTileModel의 이동 경로를 로그로 출력
             //if (_bubbleTileList.Count > 0)
             //{
-            //    var firstBubble = _bubbleTileList[0];
+            //    BubbleTileModel firstBubble = _bubbleTileList[0];
             //    Debug.Log($"First Bubble (Color: {firstBubble.TileColor}) Movement Path:");
-            //    foreach (var (position, turn) in firstBubble.MovementPath)
+            //    foreach (BubbleTilePathNode pathNode in firstBubble.MovementPathNodeList)
             //    {
-            //        Debug.Log($"Turn {turn}: {position}");
+            //        Debug.Log($"Turn {pathNode.turn}: {pathNode.tilePosition}");
             //    }
             //}
         }
 
-        private void ProcessTurn()
+        private void ProcessTurn(bool withNewBubbles)
         {
             _currentTurn += 1;
 
@@ -109,43 +115,38 @@ namespace BubbleShooterSample
                 bubbleTile.MoveToNext(_currentTurn);
             }
 
-            foreach (var pair in _colorTileListDict)
+            if (withNewBubbles)
             {
-                Color tileColor = pair.Key;
-                LinkedList<IFlowTileModel> tileList = pair.Value;
-                LinkedListNode<IFlowTileModel> headNode = tileList.First;
-                Vector2Int tileIndex = headNode.Value.TileIndex;
-                Vector2 tilePosition = headNode.Value.TilePosition;
+                foreach (var pair in _colorTileListDict)
+                {
+                    Color tileColor = pair.Key;
+                    LinkedList<IFlowTileModel> tileList = pair.Value;
+                    LinkedListNode<IFlowTileModel> headNode = tileList.First;
+                    Vector2Int tileIndex = headNode.Value.TileIndex;
+                    Vector2 tilePosition = headNode.Value.TilePosition;
 
-                _newBubbleTileList.Add(new BubbleTileModel(tileIndex, tilePosition, tileColor, _currentTurn, headNode));
+                    _newBubbleTileList.Add(new BubbleTileModel(tileIndex, tilePosition, tileColor, _currentTurn, headNode));
+                }
+
+                _bubbleTileList.AddRange(_newBubbleTileList);
             }
-
-            _bubbleTileList.AddRange(_newBubbleTileList);
         }
 
-        public bool IsAllTileFilled()
+        public bool IsAllTileFilled(int expectedCount)
         {
             bool result = true;
             foreach (var pair in _colorTileListDict)
             {
                 Color color = pair.Key;
-                LinkedList<IFlowTileModel> colorTileList = pair.Value;
+                int actualCount = _bubbleTileList.Count(bubble => bubble.TileColor == color);
 
-                foreach (IFlowTileModel colorTile in colorTileList)
+                if (actualCount < expectedCount)
                 {
-                    if (_bubbleTileList.Exists(bubble => bubble.TileIndex == colorTile.TileIndex
-                                                         && bubble.TileColor == color) == false)
-                    {
-                        result = false;
-                        break;
-                    }
-                }
-
-                if (result == false)
-                {
+                    result = false;
                     break;
                 }
             }
+
             return result;
         }
     }

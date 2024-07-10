@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace BubbleShooterSample
         [SerializeField] private BubbleModel _bubbleModel;
         [SerializeField] private BubbleView _bubbleView;
         [SerializeField] private GridView _gridView;
+        [SerializeField] private Ease _sequenceEase = Ease.OutSine;
 
         internal void UpdateFlowTileListDict(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> colorTileListDict)
         {
@@ -15,12 +17,24 @@ namespace BubbleShooterSample
 
             foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileList)
             {
-                BubbleTilePathNode headPathNodel = tileModel.HeadPathNode;
-                BubbleTile bubbleTile = _bubbleView.CreateBubble(headPathNodel.tilePosition);
+                BubbleTilePathNode headPathNode = tileModel.HeadPathNode;
+                BubbleTile bubbleTile = _bubbleView.CreateBubble(headPathNode.tilePosition);
+
+                Sequence sequence = DOTween.Sequence();
+                float moveDuration = _bubbleView.MoveDuration;
+                float fadeDuration = moveDuration * .5f;
                 foreach (BubbleTilePathNode node in tileModel.MovementPathNodeList)
                 {
-                    bubbleTile.Move(node.tilePosition, node.turn);
+                    Vector2 tilePosition = node.tilePosition;
+                    int turn = node.turn;
+                    sequence.Insert(turn * moveDuration,
+                                    bubbleTile.CachedTransform.DOMove(tilePosition, moveDuration).SetEase(Ease.Linear));
+                    if (bubbleTile.SpriteRenderer.color.a == 0f)
+                    {
+                        sequence.Join(bubbleTile.SpriteRenderer.DOFade(1f, fadeDuration));
+                    }
                 }
+                sequence.SetEase(_sequenceEase);
             }
         }
     }

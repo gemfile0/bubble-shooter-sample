@@ -1,4 +1,3 @@
-using DG.Tweening;
 using UnityEngine;
 
 namespace BubbleShooterSample
@@ -20,24 +19,12 @@ namespace BubbleShooterSample
         }
         private Transform _cachedTransform;
 
-        public Sequence Sequence => _sequence;
-        private Sequence _sequence;
+        public SpriteRenderer SpriteRenderer => _spriteRenderer;
 
-        private float _moveDuration;
-
-        public void Init(Color bubbleColor, float moveDuration)
+        public void Init(Color bubbleColor)
         {
-            if (_sequence == null)
-            {
-                _sequence = DOTween.Sequence();
-            }
+            bubbleColor.a = 0f;
             _spriteRenderer.color = bubbleColor;
-            _moveDuration = moveDuration;
-        }
-
-        public void Move(Vector2 tilePosition, int turn)
-        {
-            _sequence.Insert(turn * _moveDuration, CachedTransform.DOMove(tilePosition, _moveDuration).SetEase(Ease.Linear));
         }
     }
 }

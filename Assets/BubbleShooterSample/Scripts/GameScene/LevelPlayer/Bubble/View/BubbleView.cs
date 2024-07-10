@@ -17,6 +17,8 @@ namespace BubbleShooterSample
             new Color(0.8f, 0.8f, 0.8f) // lightening color (밝은 회색)
         };
 
+        public float MoveDuration => _moveDuration;
+
         private Transform CachedTransform
         {
             get
@@ -44,7 +46,7 @@ namespace BubbleShooterSample
         internal BubbleTile CreateBubble(Vector2 tilePosition)
         {
             BubbleTile bubbleTile = _bubbleTilePool.Get();
-            bubbleTile.Init(GetRandomBubbleTileColor(), _moveDuration);
+            bubbleTile.Init(GetRandomBubbleTileColor());
             bubbleTile.CachedTransform.SetParent(CachedTransform);
             bubbleTile.CachedTransform.position = tilePosition;
             return bubbleTile;
