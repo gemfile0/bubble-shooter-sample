@@ -26,8 +26,8 @@ namespace BubbleShooterSample.LevelEditor
 
         private void Awake()
         {
-            _flowTilePositions = new Dictionary<Vector2Int, FlowEditorTile>();
-            _flowTilePool = new GameObjectPool<FlowEditorTile>(
+            _flowTilePositions = new();
+            _flowTilePool = new(
                 CachedTransform,
                 _flowTilePrefab.gameObject,
                 defaultCapacity: 20

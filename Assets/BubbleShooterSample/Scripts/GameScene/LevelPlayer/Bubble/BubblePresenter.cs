@@ -13,6 +13,14 @@ namespace BubbleShooterSample
         {
             _bubbleModel.FillBubbleTileList(colorTileListDict);
 
+            foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileList)
+            {
+                _bubbleView.CreateBubble(tileModel.HeadIndex);
+                foreach (var (tileIndex, turn) in tileModel.MovementPath)
+                {
+                    _bubbleView.MoveBubble(tileIndex, turn);
+                }
+            }
         }
     }
 }

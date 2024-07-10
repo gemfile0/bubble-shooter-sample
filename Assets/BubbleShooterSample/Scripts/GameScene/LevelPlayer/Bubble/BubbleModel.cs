@@ -5,16 +5,16 @@ namespace BubbleShooterSample
 {
     public interface IBubbleTileModel
     {
-        public Vector2Int TileIndex { get; }
-        public Color TileColor { get; }
+        public Vector2Int HeadIndex { get; }
         public IEnumerable<(Vector2Int, int)> MovementPath { get; }
     }
 
     public class BubbleTileModel : IBubbleTileModel
     {
+        public Vector2Int HeadIndex => _movementPath[0].Item1;
+        public IEnumerable<(Vector2Int, int)> MovementPath => _movementPath;
         public Vector2Int TileIndex => _tileIndex;
         public Color TileColor => _tileColor;
-        public IEnumerable<(Vector2Int, int)> MovementPath => _movementPath;
 
         private Vector2Int _tileIndex;
         private Color _tileColor;
@@ -91,6 +91,11 @@ namespace BubbleShooterSample
 
             _newBubbleTileList.Clear();
 
+            foreach (BubbleTileModel bubbleTile in _bubbleTileList)
+            {
+                bubbleTile.MoveToNext(_currentTurn);
+            }
+
             foreach (var pair in _colorTileListDict)
             {
                 Color tileColor = pair.Key;
@@ -99,14 +104,6 @@ namespace BubbleShooterSample
                 Vector2Int tileIndex = headNode.Value.TileIndex;
 
                 _newBubbleTileList.Add(new BubbleTileModel(tileIndex, tileColor, _currentTurn, headNode));
-
-                foreach (BubbleTileModel bubbleTile in _bubbleTileList)
-                {
-                    if (bubbleTile.TileColor == tileColor)
-                    {
-                        bubbleTile.MoveToNext(_currentTurn);
-                    }
-                }
             }
 
             _bubbleTileList.AddRange(_newBubbleTileList);
