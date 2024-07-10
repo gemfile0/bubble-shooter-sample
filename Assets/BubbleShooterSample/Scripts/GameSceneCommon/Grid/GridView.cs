@@ -60,7 +60,7 @@ namespace BubbleShooterSample
 
         private List<Vector2Int> neighborIndexList;
 
-        void Awake()
+        private void Awake()
         {
             _gridTileDict = new();
             neighborIndexList = new();
@@ -68,9 +68,16 @@ namespace BubbleShooterSample
             CreateGrid();
         }
 
-        void CreateGrid()
+        public Vector3 GetTotalGridSize()
         {
+            float width = (_columnCount - 1) * HorizontalSpacing + HorizontalSpacing;
+            float height = (_rowCount - 1) * VerticalSpacing + VerticalSpacing;
 
+            return new Vector3(width, height, 0);
+        }
+
+        private void CreateGrid()
+        {
             float horizontalSpacing = HorizontalSpacing;
             float horizontalSpacingHalf = horizontalSpacing / 2f;
             float verticalSpacing = VerticalSpacing;

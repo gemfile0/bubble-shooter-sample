@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace BubbleShooterSample.LevelPlayer
@@ -6,6 +7,15 @@ namespace BubbleShooterSample.LevelPlayer
     {
         [SerializeField] private FlowPresenter _flowPresenter;
         [SerializeField] private BubblePresenter _bubblePresenter;
+
+        [Header("DOTween Settings")]
+        [SerializeField] private int _tweenCapacity = 1000;
+        [SerializeField] private int _sequenceCapacity = 100;
+
+        private void Awake()
+        {
+            DOTween.SetTweensCapacity(_tweenCapacity, _sequenceCapacity);
+        }
 
         private void OnEnable()
         {

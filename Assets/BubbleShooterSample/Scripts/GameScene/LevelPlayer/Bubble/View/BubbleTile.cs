@@ -26,5 +26,12 @@ namespace BubbleShooterSample
             bubbleColor.a = 0f;
             _spriteRenderer.color = bubbleColor;
         }
+
+        public void SetRendererAlpha(float value)
+        {
+            Color bubbleColor = _spriteRenderer.color;
+            bubbleColor.a = value;
+            _spriteRenderer.color = bubbleColor;
+        }
     }
 }

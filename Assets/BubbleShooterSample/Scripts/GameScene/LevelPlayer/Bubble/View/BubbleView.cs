@@ -1,5 +1,4 @@
 using BubbleShooterSample.Helper;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BubbleShooterSample
@@ -8,14 +7,6 @@ namespace BubbleShooterSample
     {
         [SerializeField] private BubbleTile _bubbleTilePrefab;
         [SerializeField] private float _moveDuration = 1f;
-        [SerializeField]
-        private List<Color> _bubbleTileColorList = new()
-        {
-            Color.yellow,
-            Color.red,
-            Color.blue,
-            new Color(0.8f, 0.8f, 0.8f) // lightening color (밝은 회색)
-        };
 
         public float MoveDuration => _moveDuration;
 
@@ -43,19 +34,13 @@ namespace BubbleShooterSample
             );
         }
 
-        internal BubbleTile CreateBubble(Vector2 tilePosition)
+        internal BubbleTile CreateBubbleTile(Color bubbleColor, Vector2 tilePosition)
         {
             BubbleTile bubbleTile = _bubbleTilePool.Get();
-            bubbleTile.Init(GetRandomBubbleTileColor());
+            bubbleTile.Init(bubbleColor);
             bubbleTile.CachedTransform.SetParent(CachedTransform);
             bubbleTile.CachedTransform.position = tilePosition;
             return bubbleTile;
-        }
-
-        public Color GetRandomBubbleTileColor()
-        {
-            int randomIndex = Random.Range(0, _bubbleTileColorList.Count);
-            return _bubbleTileColorList[randomIndex];
         }
     }
 }

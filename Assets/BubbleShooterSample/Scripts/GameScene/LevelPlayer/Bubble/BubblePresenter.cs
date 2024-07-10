@@ -10,15 +10,24 @@ namespace BubbleShooterSample
         [SerializeField] private BubbleView _bubbleView;
         [SerializeField] private GridView _gridView;
         [SerializeField] private Ease _sequenceEase = Ease.OutSine;
+        [SerializeField]
+        private List<Color> _bubbleTileColorList = new()
+        {
+            Color.yellow,
+            Color.red,
+            Color.blue,
+            new Color(0.8f, 0.8f, 0.8f) // lightening color (밝은 회색)
+        };
 
         internal void UpdateFlowTileListDict(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> colorTileListDict)
         {
-            _bubbleModel.FillBubbleTileList(colorTileListDict);
+            _bubbleModel.FillBubbleTileList(colorTileListDict, GetRandomBubbleTileColor);
 
             foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileList)
             {
                 BubbleTilePathNode headPathNode = tileModel.HeadPathNode;
-                BubbleTile bubbleTile = _bubbleView.CreateBubble(headPathNode.tilePosition);
+                Color bubbleColor = tileModel.BubbleColor;
+                BubbleTile bubbleTile = _bubbleView.CreateBubbleTile(bubbleColor, headPathNode.tilePosition);
 
                 Sequence sequence = DOTween.Sequence();
                 float moveDuration = _bubbleView.MoveDuration;
@@ -36,6 +45,19 @@ namespace BubbleShooterSample
                 }
                 sequence.SetEase(_sequenceEase);
             }
+        }
+
+        public Color GetRandomBubbleTileColor()
+        {
+            int randomIndex = Random.Range(0, _bubbleTileColorList.Count);
+            return _bubbleTileColorList[randomIndex];
+        }
+
+        public BubbleTile CreateBubbleTile(Vector2 tilePosition)
+        {
+            Color bubbleColor = GetRandomBubbleTileColor();
+            BubbleTile bubbleTile = _bubbleView.CreateBubbleTile(bubbleColor, tilePosition);
+            return bubbleTile;
         }
     }
 }
