@@ -15,10 +15,11 @@ namespace BubbleShooterSample
 
             foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileList)
             {
-                _bubbleView.CreateBubble(tileModel.HeadIndex);
-                foreach (var (tileIndex, turn) in tileModel.MovementPath)
+                BubbleTilePathNode headPathNodel = tileModel.HeadPathNode;
+                BubbleTile bubbleTile = _bubbleView.CreateBubble(headPathNodel.tilePosition);
+                foreach (BubbleTilePathNode node in tileModel.MovementPathNodeList)
                 {
-                    _bubbleView.MoveBubble(tileIndex, turn);
+                    bubbleTile.Move(node.tilePosition, node.turn);
                 }
             }
         }

@@ -5,27 +5,39 @@ namespace BubbleShooterSample
 {
     public interface IBubbleTileModel
     {
-        public Vector2Int HeadIndex { get; }
-        public IEnumerable<(Vector2Int, int)> MovementPath { get; }
+        public BubbleTilePathNode HeadPathNode { get; }
+        public IEnumerable<BubbleTilePathNode> MovementPathNodeList { get; }
+    }
+
+    public struct BubbleTilePathNode
+    {
+        public Vector2 tilePosition;
+        public int turn;
+
+        public BubbleTilePathNode(Vector2 tilePosition, int turn)
+        {
+            this.tilePosition = tilePosition;
+            this.turn = turn;
+        }
     }
 
     public class BubbleTileModel : IBubbleTileModel
     {
-        public Vector2Int HeadIndex => _movementPath[0].Item1;
-        public IEnumerable<(Vector2Int, int)> MovementPath => _movementPath;
+        public BubbleTilePathNode HeadPathNode => _movementPathNodeList[0];
+        public IEnumerable<BubbleTilePathNode> MovementPathNodeList => _movementPathNodeList;
         public Vector2Int TileIndex => _tileIndex;
         public Color TileColor => _tileColor;
 
         private Vector2Int _tileIndex;
         private Color _tileColor;
-        private List<(Vector2Int, int)> _movementPath;
+        private List<BubbleTilePathNode> _movementPathNodeList;
         private LinkedListNode<IFlowTileModel> _currentNode;
 
-        public BubbleTileModel(Vector2Int tileIndex, Color tileColor, int turn, LinkedListNode<IFlowTileModel> currentNode)
+        public BubbleTileModel(Vector2Int tileIndex, Vector2 tilePosition, Color tileColor, int turn, LinkedListNode<IFlowTileModel> currentNode)
         {
             _tileIndex = tileIndex;
             _tileColor = tileColor;
-            _movementPath = new() { (tileIndex, turn) };
+            _movementPathNodeList = new() { new BubbleTilePathNode(tilePosition, turn) };
             _currentNode = currentNode;
         }
 
@@ -35,7 +47,8 @@ namespace BubbleShooterSample
             if (_currentNode != null)
             {
                 _tileIndex = _currentNode.Value.TileIndex;
-                _movementPath.Add((TileIndex, turn));
+                Vector2 tilePosition = _currentNode.Value.TilePosition;
+                _movementPathNodeList.Add(new BubbleTilePathNode(tilePosition, turn));
             }
         }
     }
@@ -102,8 +115,9 @@ namespace BubbleShooterSample
                 LinkedList<IFlowTileModel> tileList = pair.Value;
                 LinkedListNode<IFlowTileModel> headNode = tileList.First;
                 Vector2Int tileIndex = headNode.Value.TileIndex;
+                Vector2 tilePosition = headNode.Value.TilePosition;
 
-                _newBubbleTileList.Add(new BubbleTileModel(tileIndex, tileColor, _currentTurn, headNode));
+                _newBubbleTileList.Add(new BubbleTileModel(tileIndex, tilePosition, tileColor, _currentTurn, headNode));
             }
 
             _bubbleTileList.AddRange(_newBubbleTileList);

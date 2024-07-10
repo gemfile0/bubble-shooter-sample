@@ -7,6 +7,15 @@ namespace BubbleShooterSample
     public class BubbleView : MonoBehaviour
     {
         [SerializeField] private BubbleTile _bubbleTilePrefab;
+        [SerializeField] private float _moveDuration = 1f;
+        [SerializeField]
+        private List<Color> _bubbleTileColorList = new()
+        {
+            Color.yellow,
+            Color.red,
+            Color.blue,
+            new Color(0.8f, 0.8f, 0.8f) // lightening color (밝은 회색)
+        };
 
         private Transform CachedTransform
         {
@@ -23,11 +32,8 @@ namespace BubbleShooterSample
 
         private GameObjectPool<BubbleTile> _bubbleTilePool;
 
-        private Dictionary<Vector2Int, BubbleTile> _bubbleTileDict;
-
         private void Awake()
         {
-            _bubbleTileDict = new();
             _bubbleTilePool = new(
                 CachedTransform,
                 _bubbleTilePrefab.gameObject,
@@ -35,17 +41,19 @@ namespace BubbleShooterSample
             );
         }
 
-        internal BubbleTile CreateBubble(Vector2Int headIndex)
+        internal BubbleTile CreateBubble(Vector2 tilePosition)
         {
             BubbleTile bubbleTile = _bubbleTilePool.Get();
+            bubbleTile.Init(GetRandomBubbleTileColor(), _moveDuration);
             bubbleTile.CachedTransform.SetParent(CachedTransform);
+            bubbleTile.CachedTransform.position = tilePosition;
             return bubbleTile;
         }
 
-        internal void MoveBubble(Vector2Int tileIndex, int turn)
+        public Color GetRandomBubbleTileColor()
         {
-
+            int randomIndex = Random.Range(0, _bubbleTileColorList.Count);
+            return _bubbleTileColorList[randomIndex];
         }
-
     }
 }
