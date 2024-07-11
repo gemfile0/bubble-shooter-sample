@@ -8,17 +8,6 @@ namespace BubbleShooterSample.LevelEditor
     {
         [SerializeField] private FlowEditorTile _flowTilePrefab;
 
-        private Transform CachedTransform
-        {
-            get
-            {
-                if (_cachedTransform == null)
-                {
-                    _cachedTransform = transform;
-                }
-                return _cachedTransform;
-            }
-        }
         private Transform _cachedTransform;
 
         private Dictionary<Vector2Int, FlowEditorTile> _flowTilePositions;
@@ -26,9 +15,11 @@ namespace BubbleShooterSample.LevelEditor
 
         private void Awake()
         {
+            _cachedTransform = transform;
+
             _flowTilePositions = new();
             _flowTilePool = new(
-                CachedTransform,
+                _cachedTransform,
                 _flowTilePrefab.gameObject,
                 defaultCapacity: 20
             );
@@ -37,7 +28,7 @@ namespace BubbleShooterSample.LevelEditor
         public void CreateFlowTile(Vector2Int tileIndex, Vector2 tilePosition, FlowTileType tileType, Color tileColor)
         {
             FlowEditorTile flowTile = _flowTilePool.Get();
-            flowTile.CachedTransform.SetParent(CachedTransform);
+            flowTile.CachedTransform.SetParent(_cachedTransform);
             flowTile.CachedTransform.position = tilePosition;
             flowTile.Init(tileIndex, tileType, tileColor);
             _flowTilePositions.Add(tileIndex, flowTile);

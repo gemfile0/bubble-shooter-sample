@@ -39,17 +39,6 @@ namespace BubbleShooterSample
         }
         private float _verticalSpacing;
 
-        private Transform CachedTransform
-        {
-            get
-            {
-                if (_cachedTransform == null)
-                {
-                    _cachedTransform = transform;
-                }
-                return _cachedTransform;
-            }
-        }
         private Transform _cachedTransform;
 
         public IEnumerable<IGridTile> GridTileList
@@ -62,6 +51,8 @@ namespace BubbleShooterSample
 
         private void Awake()
         {
+            _cachedTransform = transform;
+
             _gridTileDict = new();
             neighborIndexList = new();
 
@@ -96,7 +87,7 @@ namespace BubbleShooterSample
                     Vector2Int tileIndex = new Vector2Int(col, row);
                     Vector2 tilePosition = new Vector2(xPos, yPos);
 
-                    GridTile gridTile = Instantiate(_gridPrefab, tilePosition, Quaternion.identity, CachedTransform);
+                    GridTile gridTile = Instantiate(_gridPrefab, tilePosition, Quaternion.identity, _cachedTransform);
                     gridTile.Init(tileIndex, tilePosition);
                     _gridTileDict.Add(tileIndex, gridTile);
                 }

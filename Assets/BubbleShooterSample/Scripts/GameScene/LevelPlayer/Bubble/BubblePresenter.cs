@@ -2,7 +2,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelPlayer
 {
     public class BubblePresenter : MonoBehaviour
     {

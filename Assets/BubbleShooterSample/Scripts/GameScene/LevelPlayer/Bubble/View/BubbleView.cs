@@ -1,7 +1,7 @@
 using BubbleShooterSample.Helper;
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelPlayer
 {
     public class BubbleView : MonoBehaviour
     {
@@ -10,25 +10,16 @@ namespace BubbleShooterSample
 
         public float MoveDuration => _moveDuration;
 
-        private Transform CachedTransform
-        {
-            get
-            {
-                if (_cachedTransform == null)
-                {
-                    _cachedTransform = transform;
-                }
-                return _cachedTransform;
-            }
-        }
         private Transform _cachedTransform;
 
         private GameObjectPool<BubbleTile> _bubbleTilePool;
 
         private void Awake()
         {
+            _cachedTransform = transform;
+
             _bubbleTilePool = new(
-                CachedTransform,
+                _cachedTransform,
                 _bubbleTilePrefab.gameObject,
                 defaultCapacity: 50
             );
@@ -38,7 +29,7 @@ namespace BubbleShooterSample
         {
             BubbleTile bubbleTile = _bubbleTilePool.Get();
             bubbleTile.Init(bubbleColor);
-            bubbleTile.CachedTransform.SetParent(CachedTransform);
+            bubbleTile.CachedTransform.SetParent(_cachedTransform);
             bubbleTile.CachedTransform.position = tilePosition;
             return bubbleTile;
         }

@@ -1,10 +1,11 @@
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelPlayer
 {
     public class BubbleTile : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private Collider2D _collider2D;
 
         public Transform CachedTransform
         {
@@ -32,6 +33,11 @@ namespace BubbleShooterSample
             Color bubbleColor = _spriteRenderer.color;
             bubbleColor.a = value;
             _spriteRenderer.color = bubbleColor;
+        }
+
+        public void SetColliderEnabled(bool value)
+        {
+            _collider2D.enabled = value;
         }
     }
 }

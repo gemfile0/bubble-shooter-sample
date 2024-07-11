@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelPlayer
 {
     public class FlowPresenter : MonoBehaviour,
         ILevelRestorable
