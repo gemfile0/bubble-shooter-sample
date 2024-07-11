@@ -370,8 +370,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gridPrefab: {fileID: 6385871402730285183, guid: e47ebe88cfa615140934b79056b97ecf, type: 3}
-  _rowCount: 9
-  _columnCount: 10
   _gridRadius: 0.5
 --- !u!210 &275305538
 SortingGroup:
@@ -398,7 +396,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 985812686}
+  m_Father: {fileID: 385280548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &287588251
 GameObject:
@@ -460,13 +458,74 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bubbleModel: {fileID: 287588253}
   _bubbleView: {fileID: 229802477}
-  _gridView: {fileID: 275305537}
   _sequenceEase: 3
   _bubbleTileColorList:
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0, g: 0, b: 1, a: 1}
   - {r: 0.8, g: 0.8, b: 0.8, a: 1}
+--- !u!1 &385280547
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 385280548}
+  - component: {fileID: 385280550}
+  - component: {fileID: 385280549}
+  m_Layer: 0
+  m_Name: Grid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &385280548
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385280547}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 275305539}
+  m_Father: {fileID: 985812686}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &385280549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385280547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f617524ec452cda4a8e07bb44a56a16f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &385280550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385280547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e50de2353147e71459ad0855fb0daa4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rowCount: 9
+  _columnCount: 10
+  _gridModel: {fileID: 385280549}
+  _gridView: {fileID: 275305537}
 --- !u!1 &476535339
 GameObject:
   m_ObjectHideFlags: 0
@@ -1158,10 +1217,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 519420031}
-  _gridView: {fileID: 275305537}
+  _gridPresenter: {fileID: 385280550}
   _flowPresenter: {fileID: 1840337599}
   _bubblePresenter: {fileID: 287588254}
   _bubbleShooter: {fileID: 1867635652}
+  _gridPresenter: {fileID: 0}
   _wallView: {fileID: 1776097546}
   _tweenCapacity: 1000
   _sequenceCapacity: 100
@@ -1179,7 +1239,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 898999398}
-  - {fileID: 275305539}
+  - {fileID: 385280548}
   - {fileID: 1776097545}
   - {fileID: 1840337598}
   - {fileID: 287588252}
@@ -1671,14 +1731,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bubblePresenter: {fileID: 287588254}
-  _gridView: {fileID: 275305537}
   _shooterTransform: {fileID: 2013237498}
   _shooterPositionY: -5
   _lineRenderer: {fileID: 476535340}
   _maxDistance: 10
   _bubbleSpeed: 10
   _snappingDuration: 0.25
-  _snappingEase: 6
   _bumpDistance: 0.1
 --- !u!1 &1913760724
 GameObject:

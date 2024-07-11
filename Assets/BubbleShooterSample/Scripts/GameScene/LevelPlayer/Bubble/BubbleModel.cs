@@ -63,15 +63,16 @@ namespace BubbleShooterSample.LevelPlayer
 
     public class BubbleModel : MonoBehaviour
     {
+        public event Action<IReadOnlyCollection<Vector2Int>> onBubbleTileSetUpdated;
+
         public IEnumerable<IBubbleTileModel> BubbleTileList => _bubbleTileList;
-        public IReadOnlyDictionary<Vector2Int, BubbleTileModel> BubbleTileDict => _bubbleTileDict;
 
         private const int MaxTurns = 100;
 
         private int _currentTurn;
         private List<BubbleTileModel> _bubbleTileList;
         private List<BubbleTileModel> _newBubbleTileList;
-        private Dictionary<Vector2Int, BubbleTileModel> _bubbleTileDict;
+        private HashSet<Vector2Int> _bubbleTileSet;
 
         private IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> _flowTileListDict;
         private Func<Color> _getRandomBubbleTileColor;
@@ -81,7 +82,7 @@ namespace BubbleShooterSample.LevelPlayer
             _currentTurn = 0;
             _bubbleTileList = new();
             _newBubbleTileList = new();
-            _bubbleTileDict = new();
+            _bubbleTileSet = new();
         }
 
         internal void FillBubbleTileList(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> flowTileListDict,
@@ -106,11 +107,12 @@ namespace BubbleShooterSample.LevelPlayer
             }
 
             // 모든 이동이 완료된 후 포지션 등록
-            _bubbleTileDict.Clear();
+            _bubbleTileSet.Clear();
             foreach (BubbleTileModel bubbleTile in _bubbleTileList)
             {
-                _bubbleTileDict.Add(bubbleTile.TileIndex, bubbleTile);
+                _bubbleTileSet.Add(bubbleTile.TileIndex);
             }
+            onBubbleTileSetUpdated?.Invoke(_bubbleTileSet);
 
             // 첫 번째 BubbleTileModel의 이동 경로를 로그로 출력
             //if (_bubbleTileList.Count > 0)

@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +9,6 @@ namespace BubbleShooterSample.LevelPlayer
     {
         [SerializeField] private BubbleModel _bubbleModel;
         [SerializeField] private BubbleView _bubbleView;
-        [SerializeField] private GridView _gridView;
         [SerializeField] private Ease _sequenceEase = Ease.OutSine;
         [SerializeField]
         private List<Color> _bubbleTileColorList = new()
@@ -19,15 +19,15 @@ namespace BubbleShooterSample.LevelPlayer
             new Color(0.8f, 0.8f, 0.8f) // lightening color (밝은 회색)
         };
 
+        public event Action<IReadOnlyCollection<Vector2Int>> onBubbleTileSetUpdated
+        {
+            add { _bubbleModel.onBubbleTileSetUpdated += value; }
+            remove { _bubbleModel.onBubbleTileSetUpdated -= value; }
+        }
+
         internal void UpdateFlowTileListDict(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> colorTileListDict)
         {
             _bubbleModel.FillBubbleTileList(colorTileListDict, GetRandomBubbleTileColor);
-            _gridView.ClearOccupiedTiles();
-            foreach (var pair in _bubbleModel.BubbleTileDict)
-            {
-                Vector2Int tileIndex = pair.Key;
-                _gridView.OccupyTile(tileIndex);
-            }
 
             // 버블 생성 연출
             foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileList)
@@ -56,7 +56,7 @@ namespace BubbleShooterSample.LevelPlayer
 
         public Color GetRandomBubbleTileColor()
         {
-            int randomIndex = Random.Range(0, _bubbleTileColorList.Count);
+            int randomIndex = UnityEngine.Random.Range(0, _bubbleTileColorList.Count);
             return _bubbleTileColorList[randomIndex];
         }
 

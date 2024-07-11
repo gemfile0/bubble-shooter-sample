@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,6 @@ namespace BubbleShooterSample.LevelPlayer
     public class BubbleShooter : MonoBehaviour
     {
         [SerializeField] private BubblePresenter _bubblePresenter;
-        [SerializeField] private GridView _gridView;
 
         [Header("Shooter Transform")]
         [SerializeField] private Transform _shooterTransform;
@@ -20,8 +20,9 @@ namespace BubbleShooterSample.LevelPlayer
         [Header("Bubble Settings")]
         [SerializeField] private float _bubbleSpeed = 10f;
         [SerializeField] private float _snappingDuration = .25f;
-        [SerializeField] private Ease _snappingEase = Ease.OutQuad;
         [SerializeField] private float _bumpDistance = 0.1f;
+
+        public event Func<Vector2, Vector2> requestClosestTilePosition;
 
         private const int MaxReflections = 2;
         private const float ColliderOffset = 0.01f;
@@ -32,20 +33,26 @@ namespace BubbleShooterSample.LevelPlayer
         private Vector3 _shootDirection;
         private IEnumerable<Transform> _hitBubbleTransforms;
 
+        private Vector3 _totalGridSize;
+        private float _horizontalSpacing;
+
         private void Awake()
         {
             _linePoints = new();
         }
 
-        public void Init()
+        public void Init(Vector3 totalGridSize, float horizontalSpacing)
         {
+            _totalGridSize = totalGridSize;
+            _horizontalSpacing = horizontalSpacing;
+
             SetupShooter();
         }
 
         private void SetupShooter()
         {
-            Vector2 gridSizeHalf = _gridView.GetTotalGridSize() / 2f;
-            float horizontalSpacingHalf = _gridView.HorizontalSpacing / 2f;
+            Vector2 gridSizeHalf = _totalGridSize / 2f;
+            float horizontalSpacingHalf = _horizontalSpacing / 2f;
 
             _shooterTransform.position = new Vector2(gridSizeHalf.x - horizontalSpacingHalf, _shooterPositionY);
             _shooterTopPosition = _shooterTransform.position + new Vector3(0, 1.9f / 2, 0);
@@ -88,7 +95,7 @@ namespace BubbleShooterSample.LevelPlayer
 
         private void SnapToGrid()
         {
-            Vector3 closestTilePosition = _gridView.GetClosestTilePosition(_bubbleTile.CachedTransform.position);
+            Vector3 closestTilePosition = requestClosestTilePosition.Invoke(_bubbleTile.CachedTransform.position);
             _bubbleTile.CachedTransform.DOMove(closestTilePosition, _snappingDuration);
         }
 

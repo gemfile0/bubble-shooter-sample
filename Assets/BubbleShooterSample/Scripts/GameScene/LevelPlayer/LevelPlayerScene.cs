@@ -25,11 +25,15 @@ namespace BubbleShooterSample.LevelPlayer
         private void OnEnable()
         {
             _flowPresenter.onColorTileListDictUpdated += _bubblePresenter.UpdateFlowTileListDict;
+            _bubblePresenter.onBubbleTileSetUpdated += _gridPresenter.UpdateBubbleTileSet;
+            _bubbleShooter.requestClosestTilePosition += _gridPresenter.GetClosestTilePosition;
         }
 
         private void OnDisable()
         {
             _flowPresenter.onColorTileListDictUpdated -= _bubblePresenter.UpdateFlowTileListDict;
+            _bubblePresenter.onBubbleTileSetUpdated -= _gridPresenter.UpdateBubbleTileSet;
+            _bubbleShooter.requestClosestTilePosition -= _gridPresenter.GetClosestTilePosition;
         }
 
         protected override void Start()
@@ -37,7 +41,7 @@ namespace BubbleShooterSample.LevelPlayer
             base.Start();
 
             // 카메라 위치가 설정된 이후에 호출되어야 하는 로직들
-            _bubbleShooter.Init();
+            _bubbleShooter.Init(_gridPresenter.GetTotalGridSize(), _gridPresenter.HorizontalSpacing);
             _wallView.Init();
         }
     }
