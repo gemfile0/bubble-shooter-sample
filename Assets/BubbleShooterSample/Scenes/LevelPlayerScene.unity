@@ -1676,11 +1676,10 @@ MonoBehaviour:
   _shooterPositionY: -5
   _lineRenderer: {fileID: 476535340}
   _maxDistance: 10
-  _maxReflections: 2
-  _hitLayer:
-    serializedVersion: 2
-    m_Bits: 192
-  _colliderOffset: 0.01
+  _bubbleSpeed: 10
+  _snappingDuration: 0.25
+  _snappingEase: 6
+  _bumpDistance: 0.1
 --- !u!1 &1913760724
 GameObject:
   m_ObjectHideFlags: 0

@@ -123,5 +123,25 @@ namespace BubbleShooterSample
                 neighborIndexList.Add(tileIndex);
             }
         }
+
+        public Vector2 GetClosestTilePosition(Vector2 position)
+        {
+            float minDistance = float.MaxValue;
+            Vector2 closestTilePosition = Vector2.zero;
+
+            foreach (var pair in _gridTileDict)
+            {
+                IGridTile gridTile = pair.Value;
+
+                float distance = Vector2.Distance(position, gridTile.Position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestTilePosition = gridTile.Position;
+                }
+            }
+
+            return closestTilePosition;
+        }
     }
 }
