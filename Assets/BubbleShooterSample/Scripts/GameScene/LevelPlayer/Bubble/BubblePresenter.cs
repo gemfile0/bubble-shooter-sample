@@ -22,7 +22,14 @@ namespace BubbleShooterSample.LevelPlayer
         internal void UpdateFlowTileListDict(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> colorTileListDict)
         {
             _bubbleModel.FillBubbleTileList(colorTileListDict, GetRandomBubbleTileColor);
+            _gridView.ClearOccupiedTiles();
+            foreach (var pair in _bubbleModel.BubbleTileDict)
+            {
+                Vector2Int tileIndex = pair.Key;
+                _gridView.OccupyTile(tileIndex);
+            }
 
+            // 버블 생성 연출
             foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileList)
             {
                 BubbleTilePathNode headPathNode = tileModel.HeadPathNode;

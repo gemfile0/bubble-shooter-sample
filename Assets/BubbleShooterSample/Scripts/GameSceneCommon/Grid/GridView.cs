@@ -47,14 +47,16 @@ namespace BubbleShooterSample
         }
         private Dictionary<Vector2Int, IGridTile> _gridTileDict;
 
-        private List<Vector2Int> neighborIndexList;
+        private List<Vector2Int> _neighborIndexList;
+        private HashSet<Vector2Int> _occupiedTiles;
 
         private void Awake()
         {
             _cachedTransform = transform;
 
             _gridTileDict = new();
-            neighborIndexList = new();
+            _neighborIndexList = new();
+            _occupiedTiles = new();
 
             CreateGrid();
         }
@@ -96,7 +98,7 @@ namespace BubbleShooterSample
 
         public IEnumerable<Vector2Int> GetNeighborIndexList(Vector2Int tileIndex)
         {
-            neighborIndexList.Clear();
+            _neighborIndexList.Clear();
             AddIfExists(new Vector2Int(tileIndex.x - 1, tileIndex.y));  // left
             AddIfExists(new Vector2Int(tileIndex.x + 1, tileIndex.y));  // right
             AddIfExists(new Vector2Int(tileIndex.x, tileIndex.y - 1));  // bottom
@@ -113,14 +115,15 @@ namespace BubbleShooterSample
                 AddIfExists(new Vector2Int(tileIndex.x + 1, tileIndex.y + 1)); // top-right
             }
 
-            return neighborIndexList;
+            return _neighborIndexList;
         }
 
         private void AddIfExists(Vector2Int tileIndex)
         {
-            if (_gridTileDict.ContainsKey(tileIndex))
+            if (_gridTileDict.ContainsKey(tileIndex)
+                && _occupiedTiles.Contains(tileIndex) == false)
             {
-                neighborIndexList.Add(tileIndex);
+                _neighborIndexList.Add(tileIndex);
             }
         }
 
@@ -131,8 +134,13 @@ namespace BubbleShooterSample
 
             foreach (var pair in _gridTileDict)
             {
-                IGridTile gridTile = pair.Value;
+                Vector2Int tileIndex = pair.Key;
+                if (_occupiedTiles.Contains(tileIndex))
+                {
+                    continue;
+                }
 
+                IGridTile gridTile = pair.Value;
                 float distance = Vector2.Distance(position, gridTile.Position);
                 if (distance < minDistance)
                 {
@@ -142,6 +150,16 @@ namespace BubbleShooterSample
             }
 
             return closestTilePosition;
+        }
+
+        public void OccupyTile(Vector2Int tileIndex)
+        {
+            _occupiedTiles.Add(tileIndex);
+        }
+
+        internal void ClearOccupiedTiles()
+        {
+            _occupiedTiles.Clear();
         }
     }
 }

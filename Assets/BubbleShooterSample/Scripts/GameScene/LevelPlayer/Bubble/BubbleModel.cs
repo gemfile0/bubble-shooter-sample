@@ -64,6 +64,7 @@ namespace BubbleShooterSample.LevelPlayer
     public class BubbleModel : MonoBehaviour
     {
         public IEnumerable<IBubbleTileModel> BubbleTileList => _bubbleTileList;
+        public IReadOnlyDictionary<Vector2Int, BubbleTileModel> BubbleTileDict => _bubbleTileDict;
 
         private const int MaxTurns = 100;
 
@@ -104,6 +105,8 @@ namespace BubbleShooterSample.LevelPlayer
                 Debug.LogWarning("최대 턴 수에 도달했습니다.");
             }
 
+            // 모든 이동이 완료된 후 포지션 등록
+            _bubbleTileDict.Clear();
             foreach (BubbleTileModel bubbleTile in _bubbleTileList)
             {
                 _bubbleTileDict.Add(bubbleTile.TileIndex, bubbleTile);
