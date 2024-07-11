@@ -11,17 +11,19 @@ namespace BubbleShooterSample.LevelPlayer
         [Header("Shooter Transform")]
         [SerializeField] private Transform _shooterTransform;
         [SerializeField] private float _shooterPositionY = -5f;
+        [SerializeField] private float _bubbleSpeed = 10f;
 
         [Header("Line Renderer")]
         [SerializeField] private LineRenderer _lineRenderer;
         [SerializeField] private float _maxDistance = 5f;
-        [SerializeField] private int _maxReflections = 5;
-        [SerializeField] private LayerMask _hitLayer;
-        [SerializeField] private float _colliderOffset = 0.01f;
+
+        private const int MaxReflections = 2;
+        private const float ColliderOffset = 0.01f;
 
         private BubbleTile _bubbleTile;
         private Vector3 _shooterTopPosition;
         private List<Vector3> _linePoints;
+        private Vector3 _shootDirection;
 
         private void Awake()
         {
@@ -54,8 +56,13 @@ namespace BubbleShooterSample.LevelPlayer
                 Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mousePosition.z = 0;
 
-                Vector3 direction = (mousePosition - _shooterTopPosition).normalized;
-                DrawGuideLine(_shooterTopPosition, direction);
+                _shootDirection = (mousePosition - _shooterTopPosition).normalized;
+                DrawGuideLine(_shooterTopPosition, _shootDirection);
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                _lineRenderer.positionCount = 0;
+                ShootBubble(_shootDirection);
             }
             else
             {
@@ -72,9 +79,14 @@ namespace BubbleShooterSample.LevelPlayer
             Vector3 currentDirection = direction;
             int reflections = 0;
             float remainingDistance = _maxDistance;
-            while (reflections < _maxReflections)
+            while (reflections < MaxReflections)
             {
-                RaycastHit2D hit = Physics2D.Raycast(currentPosition, currentDirection, remainingDistance, _hitLayer);
+                RaycastHit2D hit = Physics2D.Raycast(
+                    origin: currentPosition,
+                    direction: currentDirection,
+                    distance: remainingDistance,
+                    layerMask: LayerMaskInt.HitLayer
+                );
 
                 if (hit.collider != null)
                 {
@@ -85,16 +97,17 @@ namespace BubbleShooterSample.LevelPlayer
                     currentPosition = hitPosition;
 
                     // Bubble 콜라이더에 부딪힌 경우, 렌더링 멈춤
-                    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Bubble"))
+                    int hitLayer = hit.collider.gameObject.layer;
+                    if (hitLayer == LayerMaskInt.BubbleLayer)
                     {
                         break;
                     }
 
                     // Wall 콜라이더에 부딪힌 경우, 반사 효과 적용
-                    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
+                    if (hitLayer == LayerMaskInt.WallLayer)
                     {
-                        currentDirection = new Vector2(-currentDirection.x, currentDirection.y);
-                        currentPosition += currentDirection * _colliderOffset;
+                        currentDirection = new Vector2(-1 * currentDirection.x, currentDirection.y);
+                        currentPosition += currentDirection * ColliderOffset;
                         reflections++;
                     }
                 }
@@ -107,6 +120,13 @@ namespace BubbleShooterSample.LevelPlayer
 
             _lineRenderer.positionCount = _linePoints.Count;
             _lineRenderer.SetPositions(_linePoints.ToArray());
+        }
+
+        private void ShootBubble(Vector3 direction)
+        {
+            _bubbleTile.CachedTransform.SetParent(null);
+            _bubbleTile.SetColliderEnabled(true);
+            _bubbleTile.Shoot(direction, _bubbleSpeed);
         }
     }
 }
