@@ -158,6 +158,7 @@ namespace BubbleShooterSample.LevelPlayer
             }
             else
             {
+                _sameBubbleTileIndexList.Clear();
                 OnBubbleSequenceComplete();
             }
         }
