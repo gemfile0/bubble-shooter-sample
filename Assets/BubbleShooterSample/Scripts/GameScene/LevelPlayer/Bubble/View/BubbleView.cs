@@ -53,7 +53,12 @@ namespace BubbleShooterSample.LevelPlayer
 
         internal void RemoveBubbleTile(Vector2Int bubbleTileIndex)
         {
-            _bubbleTileDict.Remove(bubbleTileIndex);
+            if (_bubbleTileDict.TryGetValue(bubbleTileIndex, out BubbleTile bubbleTile))
+            {
+                _bubbleTileDict.Remove(bubbleTileIndex);
+
+                _bubbleTilePool.Release(bubbleTile);
+            }
         }
 
         internal BubbleTile GetBubbleTile(Vector2Int bubbleTileIndex)

@@ -71,7 +71,7 @@ namespace BubbleShooterSample
             return closestTileInfo;
         }
 
-        internal void OccupyBubbleTileSet(IReadOnlyDictionary<Vector2Int, IBubbleTileModel> bubbleTileDict)
+        internal void OccupyTileSet(IReadOnlyDictionary<Vector2Int, IBubbleTileModel> bubbleTileDict)
         {
             _gridModel.ClearOccupiedTiles();
             foreach (var pair in bubbleTileDict)
@@ -81,9 +81,14 @@ namespace BubbleShooterSample
             }
         }
 
-        internal void OccupyBubbleTile(Vector2Int tileIndex)
+        internal void OccupyTile(Vector2Int tileIndex)
         {
             _gridModel.OccupyTile(tileIndex);
+        }
+
+        internal void VacateTile(Vector2Int tileIndex)
+        {
+            _gridModel.VacateTile(tileIndex);
         }
 
         public IEnumerable<Vector2Int> GetNeighborIndexList(Vector2Int tileIndex, HashSet<Vector2Int> visitedIndexSet)

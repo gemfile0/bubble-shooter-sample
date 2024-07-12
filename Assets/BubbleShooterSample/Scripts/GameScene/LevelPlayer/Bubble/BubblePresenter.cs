@@ -29,6 +29,11 @@ namespace BubbleShooterSample.LevelPlayer
             add { _bubbleModel.onBubbleTileAdded += value; }
             remove { _bubbleModel.onBubbleTileAdded -= value; }
         }
+        public event Action<Vector2Int> onBubbleTileRemoved
+        {
+            add { _bubbleModel.onBubbleTileRemoved += value; }
+            remove { _bubbleModel.onBubbleTileRemoved -= value; }
+        }
         public event Action onBubbleSequeceComplete;
         public event Func<Vector2Int, HashSet<Vector2Int>, IEnumerable<Vector2Int>> requestGettingNeighborIndexList;
 
