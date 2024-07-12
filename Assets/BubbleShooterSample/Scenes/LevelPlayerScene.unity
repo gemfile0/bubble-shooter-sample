@@ -458,7 +458,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bubbleModel: {fileID: 287588253}
   _bubbleView: {fileID: 229802477}
-  _sequenceEase: 3
+  _sequenceEase: 4
   _bubbleTileColorList:
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
@@ -522,7 +522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e50de2353147e71459ad0855fb0daa4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rowCount: 9
+  _rowCount: 14
   _columnCount: 10
   _gridModel: {fileID: 385280549}
   _gridView: {fileID: 275305537}
@@ -808,6 +808,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 548526437}
+  - component: {fileID: 548526440}
   - component: {fileID: 548526439}
   - component: {fileID: 548526438}
   m_Layer: 6
@@ -929,6 +930,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &548526440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 548526436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74a53a2c3c9442245aee81cc2ca6f185, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 1
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,6 +1034,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 876663752}
+  - component: {fileID: 876663755}
   - component: {fileID: 876663754}
   - component: {fileID: 876663753}
   m_Layer: 6
@@ -1141,6 +1156,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &876663755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 876663751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74a53a2c3c9442245aee81cc2ca6f185, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 0
 --- !u!1 &898999397
 GameObject:
   m_ObjectHideFlags: 0
@@ -1934,10 +1962,9 @@ MonoBehaviour:
   _bubblePresenter: {fileID: 287588254}
   _shooterTransform: {fileID: 2013237498}
   _shooterPositionY: -5
-  _setupDuration: 0.5
   _guideLineRenderer: {fileID: 476535340}
   _maxDistance: 10
-  _angleRange: {x: 30, y: 150}
+  _angleRange: {x: 25, y: 155}
   _guideCircleTransform: {fileID: 1133916172}
   _bubbleSpeed: 10
   _snappingDuration: 0.25

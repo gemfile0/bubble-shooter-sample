@@ -30,7 +30,6 @@ namespace BubbleShooterSample.LevelPlayer
         public Color BubbleColor { get; private set; }
 
         private Vector3 _velocity;
-        private bool _isMoving = false;
         private Coroutine _moveCoroutine;
         private float _radius;
         private List<Transform> _hitBubbleTransformList;
@@ -42,11 +41,7 @@ namespace BubbleShooterSample.LevelPlayer
             bubbleColor.a = 0f;
             _spriteRenderer.color = bubbleColor;
 
-            _rigidbody2D.isKinematic = true;
-            _rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-
             _radius = _collider2D.radius * transform.localScale.x;
-            //Debug.Log($"Init : {_radius}");
             _hitBubbleTransformList = new();
         }
 
@@ -64,59 +59,71 @@ namespace BubbleShooterSample.LevelPlayer
 
         public void Shoot(Vector3 direction, float speed)
         {
+            _rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
             _velocity = direction * speed;
-            _isMoving = true;
+            StopMoveCoroutine();
+            _moveCoroutine = StartCoroutine(MoveCoroutine());
+        }
+
+        private void StopMoveCoroutine()
+        {
             if (_moveCoroutine != null)
             {
                 StopCoroutine(_moveCoroutine);
+                _moveCoroutine = null;
             }
-            _moveCoroutine = StartCoroutine(MoveCoroutine());
         }
 
         private IEnumerator MoveCoroutine()
         {
-            while (_isMoving)
+            float avoidColliderOffset = 0.01f;
+            while (true)
             {
-                Vector3 nextPosition = CachedTransform.position + _velocity * Time.deltaTime;
-                Vector3 raycastStartPosition = CachedTransform.position + _velocity.normalized * (_radius + 0.01f);
-                RaycastHit2D hit = Physics2D.Raycast(
+                Vector3 nextPosition = CachedTransform.position + _velocity * Time.fixedDeltaTime;
+
+                // 벽과의 충돌 감지
+                Vector3 raycastStartPosition = CachedTransform.position + _velocity.normalized * (_radius + avoidColliderOffset);
+                RaycastHit2D wallHit = Physics2D.Raycast(
                     origin: raycastStartPosition,
                     direction: _velocity,
-                    distance: _velocity.magnitude * Time.deltaTime,
-                    layerMask: LayerMaskValue.AllHitLayer
+                    distance: _velocity.magnitude * Time.fixedDeltaTime * 2 /* 거리가 짧아서 약간 더 길게 세팅 */,
+                    layerMask: LayerMaskValue.HitLayerWall
                 );
 
-                if (hit.collider != null)
+                if (wallHit.collider != null)
                 {
-                    Vector2 hitPosition = hit.point;
-                    int hitLayer = hit.collider.gameObject.layer;
-                    if (hitLayer == LayerMaskValue.BubbleNameLayer)
-                    {
-                        _velocity = Vector3.zero;
-                        _isMoving = false;
-
-                        _hitBubbleTransformList.Clear();
-                        Collider2D[] colliders = Physics2D.OverlapCircleAll(hitPosition, _radius, LayerMaskValue.BubbleHitLayer);
-                        foreach (var collider in colliders)
-                        {
-                            if (collider != _collider2D)
-                            {
-                                _hitBubbleTransformList.Add(collider.transform);
-                            }
-                        }
-                    }
-                    else if (hitLayer == LayerMaskValue.WallNameLayer)
-                    {
-                        _velocity = new Vector3(-1 * _velocity.x, _velocity.y, _velocity.z);
-                        nextPosition = hitPosition + (Vector2)(_velocity.normalized * 0.01f); // 작은 오프셋을 추가하여 충돌을 피함
-                    }
+                    _velocity = new Vector3(-1 * _velocity.x, _velocity.y, _velocity.z);
                 }
 
                 CachedTransform.position = nextPosition;
-                yield return null;
+                yield return new WaitForFixedUpdate();
             }
+        }
 
-            onHit?.Invoke(_hitBubbleTransformList);
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            int hitLayer = collision.gameObject.layer;
+            if (hitLayer == LayerMaskValue.NameLayerBubble)
+            {
+                StopMoveCoroutine();
+
+                _rigidbody2D.bodyType = RigidbodyType2D.Kinematic;
+                _velocity = Vector3.zero;
+
+                Vector2 hitPosition = collision.contacts[0].point;
+
+                _hitBubbleTransformList.Clear();
+                Collider2D[] colliders = Physics2D.OverlapCircleAll(hitPosition, _radius, LayerMaskValue.HitLayerBubble);
+                foreach (var collider in colliders)
+                {
+                    if (collider != _collider2D)
+                    {
+                        _hitBubbleTransformList.Add(collider.transform);
+                    }
+                }
+
+                onHit?.Invoke(_hitBubbleTransformList);
+            }
         }
     }
 }

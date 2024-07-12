@@ -163,8 +163,11 @@ namespace BubbleShooterSample.LevelPlayer
         private void SnapToGrid(BubbleTile bubbleTile)
         {
             ClosestTileInfo closestTileInfo = requestGettingClosestTileInfo.Invoke(bubbleTile.CachedTransform.position);
-            bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, _snappingDuration)
-                                      .OnComplete(() => requestAddingBubbleTile(closestTileInfo.Index, bubbleTile));
+
+            float snappingDurationHalf = _snappingDuration / 2f;
+            Sequence sequence = DOTween.Sequence();
+            sequence.Append(bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, _snappingDuration));
+            sequence.InsertCallback(snappingDurationHalf, () => requestAddingBubbleTile(closestTileInfo.Index, bubbleTile));
         }
 
         private void Update()
@@ -227,7 +230,7 @@ namespace BubbleShooterSample.LevelPlayer
                     origin: currentPosition,
                     direction: currentDirection,
                     distance: remainingDistance,
-                    layerMask: LayerMaskValue.AllHitLayer
+                    layerMask: LayerMaskValue.HitLayerAll
                 );
 
                 if (hit.collider != null)
@@ -240,13 +243,13 @@ namespace BubbleShooterSample.LevelPlayer
 
                     // Bubble 콜라이더에 부딪힌 경우, 렌더링 멈춤
                     int hitLayer = hit.collider.gameObject.layer;
-                    if (hitLayer == LayerMaskValue.BubbleNameLayer)
+                    if (hitLayer == LayerMaskValue.NameLayerBubble)
                     {
                         break;
                     }
 
                     // Wall 콜라이더에 부딪힌 경우, 반사 효과 적용
-                    if (hitLayer == LayerMaskValue.WallNameLayer)
+                    if (hitLayer == LayerMaskValue.NameLayerWall)
                     {
                         currentDirection = new Vector2(-1 * currentDirection.x, currentDirection.y);
                         currentPosition += currentDirection * ColliderOffset;
