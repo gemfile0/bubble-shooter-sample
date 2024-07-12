@@ -151,6 +151,7 @@ namespace BubbleShooterSample.LevelPlayer
                     BubbleTile removingTile = _bubbleView.GetBubbleTile(bubbleTileIndex);
                     if (removingTile != null)
                     {
+                        removingTile.DOKill();
                         sequence.Join(removingTile.SpriteRenderer.DOFade(0f, fadeDuration));
                     }
                 }

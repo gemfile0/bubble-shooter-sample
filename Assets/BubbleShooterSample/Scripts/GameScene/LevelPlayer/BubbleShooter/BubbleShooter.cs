@@ -163,9 +163,8 @@ namespace BubbleShooterSample.LevelPlayer
         private void SnapToGrid(BubbleTile bubbleTile)
         {
             ClosestTileInfo closestTileInfo = requestGettingClosestTileInfo.Invoke(bubbleTile.CachedTransform.position);
-            bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, _snappingDuration);
-
-            requestAddingBubbleTile(closestTileInfo.Index, bubbleTile);
+            bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, _snappingDuration)
+                                      .OnComplete(() => requestAddingBubbleTile(closestTileInfo.Index, bubbleTile));
         }
 
         private void Update()
