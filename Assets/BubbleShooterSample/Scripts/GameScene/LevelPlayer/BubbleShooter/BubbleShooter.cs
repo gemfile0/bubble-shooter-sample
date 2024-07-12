@@ -22,7 +22,8 @@ namespace BubbleShooterSample.LevelPlayer
         [SerializeField] private float _snappingDuration = .25f;
         [SerializeField] private float _bumpDistance = 0.1f;
 
-        public event Func<Vector2, Vector2> requestClosestTilePosition;
+        public event Func<Vector2, ClosestTileInfo> requestClosestTileInfo;
+        public event Action<Vector2Int> requestBubbleTile;
 
         private const int MaxReflections = 2;
         private const float ColliderOffset = 0.01f;
@@ -95,8 +96,10 @@ namespace BubbleShooterSample.LevelPlayer
 
         private void SnapToGrid()
         {
-            Vector3 closestTilePosition = requestClosestTilePosition.Invoke(_bubbleTile.CachedTransform.position);
-            _bubbleTile.CachedTransform.DOMove(closestTilePosition, _snappingDuration);
+            ClosestTileInfo closestTileInfo = requestClosestTileInfo.Invoke(_bubbleTile.CachedTransform.position);
+            _bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, _snappingDuration);
+
+            requestBubbleTile(closestTileInfo.Index);
         }
 
         private void Update()

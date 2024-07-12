@@ -4,6 +4,12 @@ using UnityEngine;
 
 namespace BubbleShooterSample
 {
+    public struct ClosestTileInfo
+    {
+        public Vector2 Position;
+        public Vector2Int Index;
+    }
+
     public class GridPresenter : MonoBehaviour
     {
         [SerializeField] private int _rowCount = 9;
@@ -39,10 +45,10 @@ namespace BubbleShooterSample
             return new Vector3(width, height, 0);
         }
 
-        public Vector2 GetClosestTilePosition(Vector2 position)
+        public ClosestTileInfo GetClosestTileInfo(Vector2 position)
         {
             float minDistance = float.MaxValue;
-            Vector2 closestTilePosition = Vector2.zero;
+            ClosestTileInfo closestTileInfo = new ClosestTileInfo();
 
             foreach (Vector2Int gridTileIndex in _gridModel.GridTileIndexSet)
             {
@@ -56,20 +62,26 @@ namespace BubbleShooterSample
                 if (distance < minDistance)
                 {
                     minDistance = distance;
-                    closestTilePosition = gridTile.Position;
+                    closestTileInfo.Index = gridTileIndex;
+                    closestTileInfo.Position = gridTile.Position;
                 }
             }
 
-            return closestTilePosition;
+            return closestTileInfo;
         }
 
-        internal void UpdateBubbleTileSet(IReadOnlyCollection<Vector2Int> bubbleTileSet)
+        internal void OccupyBubbleTileSet(IReadOnlyCollection<Vector2Int> bubbleTileSet)
         {
             _gridModel.ClearOccupiedTiles();
             foreach (Vector2Int tileIndex in bubbleTileSet)
             {
                 _gridModel.OccupyTile(tileIndex);
             }
+        }
+
+        internal void OccupyBubbleTile(Vector2Int tileIndex)
+        {
+            _gridModel.OccupyTile(tileIndex);
         }
     }
 }

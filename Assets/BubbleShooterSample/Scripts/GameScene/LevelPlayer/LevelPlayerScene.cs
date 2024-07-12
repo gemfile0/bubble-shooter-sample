@@ -25,15 +25,19 @@ namespace BubbleShooterSample.LevelPlayer
         private void OnEnable()
         {
             _flowPresenter.onColorTileListDictUpdated += _bubblePresenter.UpdateFlowTileListDict;
-            _bubblePresenter.onBubbleTileSetUpdated += _gridPresenter.UpdateBubbleTileSet;
-            _bubbleShooter.requestClosestTilePosition += _gridPresenter.GetClosestTilePosition;
+            _bubblePresenter.onBubbleTileSetUpdated += _gridPresenter.OccupyBubbleTileSet;
+            _bubblePresenter.onBubbleTileAdded += _gridPresenter.OccupyBubbleTile;
+            _bubbleShooter.requestClosestTileInfo += _gridPresenter.GetClosestTileInfo;
+            _bubbleShooter.requestBubbleTile += _bubblePresenter.AddBubbleTile;
         }
 
         private void OnDisable()
         {
             _flowPresenter.onColorTileListDictUpdated -= _bubblePresenter.UpdateFlowTileListDict;
-            _bubblePresenter.onBubbleTileSetUpdated -= _gridPresenter.UpdateBubbleTileSet;
-            _bubbleShooter.requestClosestTilePosition -= _gridPresenter.GetClosestTilePosition;
+            _bubblePresenter.onBubbleTileSetUpdated -= _gridPresenter.OccupyBubbleTileSet;
+            _bubblePresenter.onBubbleTileAdded -= _gridPresenter.OccupyBubbleTile;
+            _bubbleShooter.requestClosestTileInfo -= _gridPresenter.GetClosestTileInfo;
+            _bubbleShooter.requestBubbleTile -= _bubblePresenter.AddBubbleTile;
         }
 
         protected override void Start()

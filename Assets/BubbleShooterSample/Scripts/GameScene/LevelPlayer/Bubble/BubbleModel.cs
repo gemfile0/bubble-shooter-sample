@@ -7,13 +7,13 @@ namespace BubbleShooterSample.LevelPlayer
 {
     public struct BubbleTilePathNode
     {
-        public Vector2 tilePosition;
-        public int turn;
+        public Vector2 TilePosition;
+        public int Turn;
 
         public BubbleTilePathNode(Vector2 tilePosition, int turn)
         {
-            this.tilePosition = tilePosition;
-            this.turn = turn;
+            TilePosition = tilePosition;
+            Turn = turn;
         }
     }
 
@@ -64,6 +64,7 @@ namespace BubbleShooterSample.LevelPlayer
     public class BubbleModel : MonoBehaviour
     {
         public event Action<IReadOnlyCollection<Vector2Int>> onBubbleTileSetUpdated;
+        public event Action<Vector2Int> onBubbleTileAdded;
 
         public IEnumerable<IBubbleTileModel> BubbleTileList => _bubbleTileList;
 
@@ -172,6 +173,12 @@ namespace BubbleShooterSample.LevelPlayer
             }
 
             return result;
+        }
+
+        internal void AddBubbleTile(Vector2Int tileIndex)
+        {
+            _bubbleTileSet.Add(tileIndex);
+            onBubbleTileAdded?.Invoke(tileIndex);
         }
     }
 }

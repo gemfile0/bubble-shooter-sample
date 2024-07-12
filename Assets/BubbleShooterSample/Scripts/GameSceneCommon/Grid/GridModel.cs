@@ -43,6 +43,11 @@ namespace BubbleShooterSample
             _occupiedTileSet.Add(tileIndex);
         }
 
+        public void VacateTile(Vector2Int tileIndex)
+        {
+            _occupiedTileSet.Remove(tileIndex);
+        }
+
         public IEnumerable<Vector2Int> GetNeighborIndexList(Vector2Int tileIndex)
         {
             _neighborIndexList.Clear();

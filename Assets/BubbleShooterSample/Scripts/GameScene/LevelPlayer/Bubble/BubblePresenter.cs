@@ -24,6 +24,11 @@ namespace BubbleShooterSample.LevelPlayer
             add { _bubbleModel.onBubbleTileSetUpdated += value; }
             remove { _bubbleModel.onBubbleTileSetUpdated -= value; }
         }
+        public event Action<Vector2Int> onBubbleTileAdded
+        {
+            add { _bubbleModel.onBubbleTileAdded += value; }
+            remove { _bubbleModel.onBubbleTileAdded -= value; }
+        }
 
         internal void UpdateFlowTileListDict(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> colorTileListDict)
         {
@@ -34,15 +39,15 @@ namespace BubbleShooterSample.LevelPlayer
             {
                 BubbleTilePathNode headPathNode = tileModel.HeadPathNode;
                 Color bubbleColor = tileModel.BubbleColor;
-                BubbleTile bubbleTile = _bubbleView.CreateBubbleTile(bubbleColor, headPathNode.tilePosition);
+                BubbleTile bubbleTile = _bubbleView.CreateBubbleTile(bubbleColor, headPathNode.TilePosition);
 
                 Sequence sequence = DOTween.Sequence();
                 float moveDuration = _bubbleView.MoveDuration;
                 float fadeDuration = moveDuration * .5f;
                 foreach (BubbleTilePathNode node in tileModel.MovementPathNodeList)
                 {
-                    Vector2 tilePosition = node.tilePosition;
-                    int turn = node.turn;
+                    Vector2 tilePosition = node.TilePosition;
+                    int turn = node.Turn;
                     sequence.Insert(turn * moveDuration,
                                     bubbleTile.CachedTransform.DOMove(tilePosition, moveDuration).SetEase(Ease.Linear));
                     if (bubbleTile.SpriteRenderer.color.a == 0f)
@@ -65,6 +70,11 @@ namespace BubbleShooterSample.LevelPlayer
             Color bubbleColor = GetRandomBubbleTileColor();
             BubbleTile bubbleTile = _bubbleView.CreateBubbleTile(bubbleColor, tilePosition);
             return bubbleTile;
+        }
+
+        internal void AddBubbleTile(Vector2Int tileIndex)
+        {
+            _bubbleModel.AddBubbleTile(tileIndex);
         }
     }
 }
