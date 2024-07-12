@@ -39,7 +39,7 @@ namespace BubbleShooterSample.LevelPlayer
         private Vector2Int _tileIndex;
         private Color _tileColor;
         private List<BubbleTilePathNode> _movementPathNodeList;
-        private LinkedListNode<IFlowTileModel> _currentNode;
+        private LinkedListNode<IFlowTileModel> _flowTileNode;
         private Color _bubbleColor;
 
         public BubbleTileModel(Vector2Int tileIndex, Color bubbleColor)
@@ -48,23 +48,23 @@ namespace BubbleShooterSample.LevelPlayer
             _bubbleColor = bubbleColor;
         }
 
-        public BubbleTileModel(Vector2Int tileIndex, Color tileColor, Color bubbleColor, Vector2 tilePosition, int turn, LinkedListNode<IFlowTileModel> currentNode)
+        public BubbleTileModel(Vector2Int tileIndex, Color tileColor, Color bubbleColor, Vector2 tilePosition, int turn, LinkedListNode<IFlowTileModel> flowTileNode)
         {
             _tileIndex = tileIndex;
             _tileColor = tileColor;
             _bubbleColor = bubbleColor;
 
             _movementPathNodeList = new() { new BubbleTilePathNode(tileIndex, tilePosition, turn) };
-            _currentNode = currentNode;
+            _flowTileNode = flowTileNode;
         }
 
         public void MoveToNext(int turn)
         {
-            _currentNode = _currentNode.Next;
-            if (_currentNode != null)
+            _flowTileNode = _flowTileNode.Next;
+            if (_flowTileNode != null)
             {
-                _tileIndex = _currentNode.Value.TileIndex;
-                Vector2 tilePosition = _currentNode.Value.TilePosition;
+                _tileIndex = _flowTileNode.Value.TileIndex;
+                Vector2 tilePosition = _flowTileNode.Value.TilePosition;
                 _movementPathNodeList.Add(new BubbleTilePathNode(_tileIndex, tilePosition, turn));
             }
         }
@@ -76,7 +76,8 @@ namespace BubbleShooterSample.LevelPlayer
         public event Action<Vector2Int> onBubbleTileAdded;
         public event Action<Vector2Int> onBubbleTileRemoved;
 
-        public IEnumerable<IBubbleTileModel> BubbleTileList => _bubbleTileList;
+        public IReadOnlyCollection<IBubbleTileModel> BubbleTileList => _bubbleTileList;
+        public HashSet<Vector2Int> RootIndexSet => _rootIndexSet;
 
         private const int MaxTurns = 1000;
 
@@ -84,6 +85,7 @@ namespace BubbleShooterSample.LevelPlayer
         private List<BubbleTileModel> _bubbleTileList;
         private List<BubbleTileModel> _newBubbleTileList;
         private Dictionary<Vector2Int, IBubbleTileModel> _bubbleTileDict;
+        private HashSet<Vector2Int> _rootIndexSet;
 
         private IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> _flowTileListDict;
         private Func<Color> _getRandomBubbleTileColor;
@@ -94,6 +96,7 @@ namespace BubbleShooterSample.LevelPlayer
             _bubbleTileList = new();
             _newBubbleTileList = new();
             _bubbleTileDict = new();
+            _rootIndexSet = new();
         }
 
         internal void FillBubbleTileList(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> flowTileListDict,
@@ -102,7 +105,21 @@ namespace BubbleShooterSample.LevelPlayer
             _flowTileListDict = flowTileListDict;
             _getRandomBubbleTileColor = getRandomBubbleTileColor;
 
-            int expectedCount = flowTileListDict.First().Value.Count - 1;
+            MakeRootIndexList();
+            FillBubbleTileList();
+        }
+
+        private void MakeRootIndexList()
+        {
+            foreach (LinkedList<IFlowTileModel> flowTileList in _flowTileListDict.Values)
+            {
+                _rootIndexSet.Add(flowTileList.First.Value.TileIndex);
+            }
+        }
+
+        private void FillBubbleTileList()
+        {
+            int expectedCount = _flowTileListDict.First().Value.Count - 1;
             while (IsAllTileFilled(expectedCount) == false && _currentTurn < MaxTurns)
             {
                 ProcessTurn(withNewBubbles: true);
@@ -154,12 +171,12 @@ namespace BubbleShooterSample.LevelPlayer
                 {
                     Color tileColor = pair.Key;
                     LinkedList<IFlowTileModel> tileLinkedList = pair.Value;
-                    LinkedListNode<IFlowTileModel> headNode = tileLinkedList.First;
-                    Vector2Int tileIndex = headNode.Value.TileIndex;
-                    Vector2 tilePosition = headNode.Value.TilePosition;
+                    LinkedListNode<IFlowTileModel> headFlowTileNode = tileLinkedList.First;
+                    Vector2Int tileIndex = headFlowTileNode.Value.TileIndex;
+                    Vector2 tilePosition = headFlowTileNode.Value.TilePosition;
 
                     Color bubbleColor = _getRandomBubbleTileColor();
-                    BubbleTileModel bubbleTileModel = new(tileIndex, tileColor, bubbleColor, tilePosition, _currentTurn, headNode);
+                    BubbleTileModel bubbleTileModel = new(tileIndex, tileColor, bubbleColor, tilePosition, _currentTurn, headFlowTileNode);
                     _newBubbleTileList.Add(bubbleTileModel);
                 }
 
@@ -189,10 +206,11 @@ namespace BubbleShooterSample.LevelPlayer
         {
             BubbleTileModel bubbleTileModel = new(tileIndex, bubbleColor);
             _bubbleTileDict.Add(tileIndex, bubbleTileModel);
+            _bubbleTileList.Add(bubbleTileModel);
             onBubbleTileAdded?.Invoke(tileIndex);
         }
 
-        internal Color GetBubbleColor(Vector2Int tileIndex)
+        internal Color GetBubbleTileColor(Vector2Int tileIndex)
         {
             Color result = Color.clear;
             if (_bubbleTileDict.TryGetValue(tileIndex, out IBubbleTileModel bubbleTileModel))
@@ -201,7 +219,7 @@ namespace BubbleShooterSample.LevelPlayer
             }
             else
             {
-                Debug.LogWarning($"GetBubbleColor : 버블이 존재하지 않는 타일입니다, {tileIndex}");
+                Debug.LogWarning($"GetBubbleTileColor : 버블이 존재하지 않는 타일입니다, {tileIndex}");
             }
             return result;
         }
@@ -210,6 +228,20 @@ namespace BubbleShooterSample.LevelPlayer
         {
             _bubbleTileDict.Remove(bubbleTileIndex);
             onBubbleTileRemoved?.Invoke(bubbleTileIndex);
+        }
+
+        internal bool ContainsBubbleTile(Vector2Int tileIndex)
+        {
+            bool result = false;
+            if (_bubbleTileDict.TryGetValue(tileIndex, out IBubbleTileModel bubbleTileModel))
+            {
+                result = true;
+            }
+            else
+            {
+                Debug.LogWarning($"ContainsBubbleTile : 버블이 존재하지 않는 타일입니다, {tileIndex}");
+            }
+            return result;
         }
     }
 }
