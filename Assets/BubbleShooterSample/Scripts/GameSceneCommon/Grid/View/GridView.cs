@@ -49,7 +49,7 @@ namespace BubbleShooterSample
             _gridTileDict = new();
         }
 
-        internal void CreateGridTile(Vector2Int tileIndex)
+        internal void CreateGridTile(Vector2Int tileIndex, int rowCount)
         {
             int col = tileIndex.x;
             int row = tileIndex.y;
@@ -57,7 +57,10 @@ namespace BubbleShooterSample
             // 홀수 행일 경우, x 좌표를 왼쪽으로 반 칸 이동
             float xOffset = (row % 2 != 0) ? -HorizontalSpacing / 2f : 0;
             float xPos = col * HorizontalSpacing + xOffset;
-            float yPos = row * VerticalSpacing;
+
+            // 그리드의 전체 높이를 계산하여 yPos를 반대로 배치
+            float totalGridHeight = (rowCount - 1) * VerticalSpacing;
+            float yPos = totalGridHeight - row * VerticalSpacing;
 
             Vector2 tilePosition = new Vector2(xPos, yPos);
 

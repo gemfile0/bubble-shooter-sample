@@ -34,7 +34,7 @@ namespace BubbleShooterSample
             _gridModel.CreateGrid(_rowCount, _columnCount);
             foreach (Vector2Int gridTileIndex in _gridModel.GridTileIndexSet)
             {
-                _gridView.CreateGridTile(gridTileIndex);
+                _gridView.CreateGridTile(gridTileIndex, _rowCount);
             }
         }
 
