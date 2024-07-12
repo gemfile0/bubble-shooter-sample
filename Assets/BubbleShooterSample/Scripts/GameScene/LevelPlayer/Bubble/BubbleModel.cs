@@ -7,11 +7,13 @@ namespace BubbleShooterSample.LevelPlayer
 {
     public struct BubbleTilePathNode
     {
-        public Vector2 TilePosition;
+        public Vector2Int TileIndex;
+        public Vector3 TilePosition;
         public int Turn;
 
-        public BubbleTilePathNode(Vector2 tilePosition, int turn)
+        public BubbleTilePathNode(Vector2Int tileIndex, Vector3 tilePosition, int turn)
         {
+            TileIndex = tileIndex;
             TilePosition = tilePosition;
             Turn = turn;
         }
@@ -45,7 +47,7 @@ namespace BubbleShooterSample.LevelPlayer
             _tileColor = tileColor;
             _bubbleColor = bubbleColor;
 
-            _movementPathNodeList = new() { new BubbleTilePathNode(tilePosition, turn) };
+            _movementPathNodeList = new() { new BubbleTilePathNode(tileIndex, tilePosition, turn) };
             _currentNode = currentNode;
         }
 
@@ -56,7 +58,7 @@ namespace BubbleShooterSample.LevelPlayer
             {
                 _tileIndex = _currentNode.Value.TileIndex;
                 Vector2 tilePosition = _currentNode.Value.TilePosition;
-                _movementPathNodeList.Add(new BubbleTilePathNode(tilePosition, turn));
+                _movementPathNodeList.Add(new BubbleTilePathNode(_tileIndex, tilePosition, turn));
             }
         }
     }
@@ -68,7 +70,7 @@ namespace BubbleShooterSample.LevelPlayer
 
         public IEnumerable<IBubbleTileModel> BubbleTileList => _bubbleTileList;
 
-        private const int MaxTurns = 100;
+        private const int MaxTurns = 1000;
 
         private int _currentTurn;
         private List<BubbleTileModel> _bubbleTileList;
@@ -115,14 +117,14 @@ namespace BubbleShooterSample.LevelPlayer
             }
             onBubbleTileSetUpdated?.Invoke(_bubbleTileSet);
 
-            // 첫 번째 BubbleTileModel의 이동 경로를 로그로 출력
+            //첫 번째 BubbleTileModel의 이동 경로를 로그로 출력
             //if (_bubbleTileList.Count > 0)
             //{
             //    BubbleTileModel firstBubble = _bubbleTileList[0];
             //    Debug.Log($"First Bubble (Color: {firstBubble.TileColor}) Movement Path:");
             //    foreach (BubbleTilePathNode pathNode in firstBubble.MovementPathNodeList)
             //    {
-            //        Debug.Log($"Turn {pathNode.turn}: {pathNode.tilePosition}");
+            //        Debug.Log($"Turn {pathNode.Turn}: {pathNode.TileIndex}");
             //    }
             //}
         }

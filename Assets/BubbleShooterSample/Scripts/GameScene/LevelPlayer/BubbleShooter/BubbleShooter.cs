@@ -5,6 +5,14 @@ using UnityEngine;
 
 namespace BubbleShooterSample.LevelPlayer
 {
+    public enum BubbleShooterState
+    {
+        Wait,
+        ReadyToShoot,
+        Shooting,
+        Shooted,
+    }
+
     public class BubbleShooter : MonoBehaviour
     {
         [SerializeField] private BubblePresenter _bubblePresenter;
@@ -12,18 +20,23 @@ namespace BubbleShooterSample.LevelPlayer
         [Header("Shooter Transform")]
         [SerializeField] private Transform _shooterTransform;
         [SerializeField] private float _shooterPositionY = -5f;
+        [SerializeField] private float _setupDuration = .5f;
 
-        [Header("Line Renderer")]
-        [SerializeField] private LineRenderer _lineRenderer;
+        [Header("Guide Line")]
+        [SerializeField] private LineRenderer _guideLineRenderer;
         [SerializeField] private float _maxDistance = 5f;
+        [SerializeField] private Vector2 _angleRange = new Vector2(30, 150);
+
+        [Header("Guide Circle")]
+        [SerializeField] private Transform _guideCircleTransform;
 
         [Header("Bubble Settings")]
         [SerializeField] private float _bubbleSpeed = 10f;
         [SerializeField] private float _snappingDuration = .25f;
         [SerializeField] private float _bumpDistance = 0.1f;
 
-        public event Func<Vector2, ClosestTileInfo> requestClosestTileInfo;
-        public event Action<Vector2Int> requestBubbleTile;
+        public event Func<Vector2, ClosestTileInfo> requestGettingClosestTileInfo;
+        public event Action<Vector2Int, BubbleTile> requestAddingBubbleTile;
 
         private const int MaxReflections = 2;
         private const float ColliderOffset = 0.01f;
@@ -36,10 +49,14 @@ namespace BubbleShooterSample.LevelPlayer
 
         private Vector3 _totalGridSize;
         private float _horizontalSpacing;
+        private BubbleShooterState _currentState;
+        private GameObject _guideCircleObject;
 
         private void Awake()
         {
             _linePoints = new();
+            SetState(BubbleShooterState.Wait);
+            _guideCircleObject = _guideCircleTransform.gameObject;
         }
 
         public void Init(Vector3 totalGridSize, float horizontalSpacing)
@@ -47,37 +64,88 @@ namespace BubbleShooterSample.LevelPlayer
             _totalGridSize = totalGridSize;
             _horizontalSpacing = horizontalSpacing;
 
-            SetupShooter();
+            SetupShooter(null);
         }
 
-        private void SetupShooter()
+        internal void SetReadyToShoot()
+        {
+            if (_bubbleTile == null)
+            {
+                SetupShooter(SetStateAsReadyToShoot);
+            }
+            else
+            {
+                SetStateAsReadyToShoot();
+            }
+        }
+
+        private void SetupShooter(TweenCallback OnSetupShooterComplete)
         {
             Vector2 gridSizeHalf = _totalGridSize / 2f;
             float horizontalSpacingHalf = _horizontalSpacing / 2f;
 
             _shooterTransform.position = new Vector2(gridSizeHalf.x - horizontalSpacingHalf, _shooterPositionY);
-            _shooterTopPosition = _shooterTransform.position + new Vector3(0, 1.9f / 2, 0);
-            _bubbleTile = _bubblePresenter.CreateBubbleTile(_shooterTransform.position);
+
+            // A-1. 5시 방향에서 버블 생성
+            float radius = 1.9f / 2;
+            Vector3 startPosition = _shooterTransform.position + new Vector3(Mathf.Cos(300 * Mathf.Deg2Rad), Mathf.Sin(300 * Mathf.Deg2Rad)) * radius;
+            _shooterTopPosition = _shooterTransform.position + new Vector3(Mathf.Cos(90 * Mathf.Deg2Rad), Mathf.Sin(90 * Mathf.Deg2Rad)) * radius;
+
+            _bubbleTile = _bubblePresenter.CreateBubbleTile(startPosition);
             _bubbleTile.CachedTransform.SetParent(_shooterTransform);
-            _bubbleTile.CachedTransform.position = _shooterTopPosition;
-            _bubbleTile.SetRendererAlpha(1f);
+
+            // A-2. 경로 설정: 시계 반대 방향으로 원형 경로를 그리며 이동
+            Vector3[] path = new Vector3[]
+            {
+                startPosition,
+                _shooterTransform.position + new Vector3(Mathf.Cos(330 * Mathf.Deg2Rad), Mathf.Sin(330 * Mathf.Deg2Rad)) * radius,
+                _shooterTransform.position + new Vector3(Mathf.Cos(0 * Mathf.Deg2Rad), Mathf.Sin(0 * Mathf.Deg2Rad)) * radius,
+                _shooterTransform.position + new Vector3(Mathf.Cos(30 * Mathf.Deg2Rad), Mathf.Sin(30 * Mathf.Deg2Rad)) * radius,
+                _shooterTransform.position + new Vector3(Mathf.Cos(60 * Mathf.Deg2Rad), Mathf.Sin(60 * Mathf.Deg2Rad)) * radius,
+                _shooterTopPosition
+            };
+
+            Sequence sequence = DOTween.Sequence();
+            sequence.Append(_bubbleTile.CachedTransform.DOPath(path, _snappingDuration, PathType.CatmullRom))
+                    .Join(_bubbleTile.SpriteRenderer.DOFade(1f, _snappingDuration))
+                    .OnComplete(OnSetupShooterComplete);
+        }
+
+        private void SetStateAsReadyToShoot()
+        {
+            SetState(BubbleShooterState.ReadyToShoot);
             _bubbleTile.SetColliderEnabled(false);
             _bubbleTile.onHit += OnBubbleHit;
         }
 
-        private void OnBubbleHit(IEnumerable<Transform> hitBubbleTransforms)
+        private void SetState(BubbleShooterState state)
         {
-            _bubbleTile.onHit -= OnBubbleHit;
-            _hitBubbleTransforms = hitBubbleTransforms;
-            _bubbleTile.SetColliderEnabled(false);
-
-            SnapToGrid();
-            ReactToHit();
+            Debug.Log($"SetState : {_currentState} -> {state}");
+            _currentState = state;
         }
 
-        private void ReactToHit()
+        private void OnBubbleHit(IEnumerable<Transform> hitBubbleTransforms)
         {
-            Vector3 hitPosition = _bubbleTile.CachedTransform.position;
+            SetState(BubbleShooterState.Shooted);
+
+            _bubbleTile.onHit -= OnBubbleHit;
+            _hitBubbleTransforms = hitBubbleTransforms;
+
+            BubbleTile bubbleTile = ConsumeBubbleTile();
+            SnapToGrid(bubbleTile);
+            ReactToHit(bubbleTile);
+        }
+
+        private BubbleTile ConsumeBubbleTile()
+        {
+            BubbleTile result = _bubbleTile;
+            _bubbleTile = null;
+            return result;
+        }
+
+        private void ReactToHit(BubbleTile bubbleTile)
+        {
+            Vector3 hitPosition = bubbleTile.CachedTransform.position;
 
             foreach (Transform bubbleTransform in _hitBubbleTransforms)
             {
@@ -86,7 +154,6 @@ namespace BubbleShooterSample.LevelPlayer
                 Vector3 targetPosition = bubblePosition + direction * _bumpDistance;
 
                 // DoTween을 사용하여 움찔하는 애니메이션 추가
-
                 float snappingDurationHalf = _snappingDuration / 2f;
                 Sequence sequence = DOTween.Sequence();
                 sequence.Append(bubbleTransform.DOMove(targetPosition, snappingDurationHalf))
@@ -94,32 +161,56 @@ namespace BubbleShooterSample.LevelPlayer
             }
         }
 
-        private void SnapToGrid()
+        private void SnapToGrid(BubbleTile bubbleTile)
         {
-            ClosestTileInfo closestTileInfo = requestClosestTileInfo.Invoke(_bubbleTile.CachedTransform.position);
-            _bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, _snappingDuration);
+            ClosestTileInfo closestTileInfo = requestGettingClosestTileInfo.Invoke(bubbleTile.CachedTransform.position);
+            bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, _snappingDuration);
 
-            requestBubbleTile(closestTileInfo.Index);
+            requestAddingBubbleTile(closestTileInfo.Index, bubbleTile);
         }
 
         private void Update()
         {
+            // B-1. ReadyToShoot 상태가 아니면 리턴
+            if (_currentState != BubbleShooterState.ReadyToShoot)
+            {
+                return;
+            }
+
+            // B-2. 지정한 범위의 각도에 들어오지 않으면 리턴
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = 0;
+
+            _shootDirection = (mousePosition - _shooterTopPosition).normalized;
+            float angle = Vector2.Angle(Vector2.right, _shootDirection);
+            if (angle < _angleRange.x || angle > _angleRange.y)
+            {
+                _guideLineRenderer.positionCount = 0;
+                _guideCircleObject.SetActive(false);
+                return;
+            }
+
+            // B-3. 가이드라인 그리기
             if (Input.GetMouseButton(0))
             {
-                Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mousePosition.z = 0;
+                _guideCircleObject.SetActive(false);
 
-                _shootDirection = (mousePosition - _shooterTopPosition).normalized;
                 DrawGuideLine(_shooterTopPosition, _shootDirection);
             }
+            // B-4. 버블 쏘기
             else if (Input.GetMouseButtonUp(0))
             {
-                _lineRenderer.positionCount = 0;
+                _guideCircleObject.SetActive(false);
+
+                _guideLineRenderer.positionCount = 0;
                 ShootBubble(_shootDirection);
+                SetState(BubbleShooterState.Shooting);
             }
             else
             {
-                _lineRenderer.positionCount = 0;
+                _guideCircleObject.SetActive(true);
+                _guideCircleTransform.position = mousePosition;
+                _guideLineRenderer.positionCount = 0;
             }
         }
 
@@ -171,8 +262,8 @@ namespace BubbleShooterSample.LevelPlayer
                 }
             }
 
-            _lineRenderer.positionCount = _linePoints.Count;
-            _lineRenderer.SetPositions(_linePoints.ToArray());
+            _guideLineRenderer.positionCount = _linePoints.Count;
+            _guideLineRenderer.SetPositions(_linePoints.ToArray());
         }
 
         private void ShootBubble(Vector3 direction)

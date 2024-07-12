@@ -29,12 +29,14 @@ namespace BubbleShooterSample.LevelPlayer
             add { _bubbleModel.onBubbleTileAdded += value; }
             remove { _bubbleModel.onBubbleTileAdded -= value; }
         }
+        public event Action onBubbleSequeceComplete;
 
         internal void UpdateFlowTileListDict(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> colorTileListDict)
         {
             _bubbleModel.FillBubbleTileList(colorTileListDict, GetRandomBubbleTileColor);
 
             // 버블 생성 연출
+            Sequence totalSequence = DOTween.Sequence();
             foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileList)
             {
                 BubbleTilePathNode headPathNode = tileModel.HeadPathNode;
@@ -46,6 +48,11 @@ namespace BubbleShooterSample.LevelPlayer
                 float fadeDuration = moveDuration * .5f;
                 foreach (BubbleTilePathNode node in tileModel.MovementPathNodeList)
                 {
+                    if (bubbleTile.CachedTransform.position == node.TilePosition)
+                    {
+                        continue;
+                    }
+
                     Vector2 tilePosition = node.TilePosition;
                     int turn = node.Turn;
                     sequence.Insert(turn * moveDuration,
@@ -55,8 +62,15 @@ namespace BubbleShooterSample.LevelPlayer
                         sequence.Join(bubbleTile.SpriteRenderer.DOFade(1f, fadeDuration));
                     }
                 }
-                sequence.SetEase(_sequenceEase);
+                totalSequence.Join(sequence);
             }
+            totalSequence.SetEase(_sequenceEase);
+            totalSequence.OnComplete(OnBubbleSequenceComplete);
+        }
+
+        private void OnBubbleSequenceComplete()
+        {
+            onBubbleSequeceComplete?.Invoke();
         }
 
         public Color GetRandomBubbleTileColor()
@@ -72,9 +86,11 @@ namespace BubbleShooterSample.LevelPlayer
             return bubbleTile;
         }
 
-        internal void AddBubbleTile(Vector2Int tileIndex)
+        internal void AddBubbleTile(Vector2Int tileIndex, BubbleTile bubbleTile)
         {
             _bubbleModel.AddBubbleTile(tileIndex);
+            _bubbleView.AddBubbleTile(bubbleTile);
+            OnBubbleSequenceComplete();
         }
     }
 }

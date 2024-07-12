@@ -33,5 +33,10 @@ namespace BubbleShooterSample.LevelPlayer
             bubbleTile.CachedTransform.position = tilePosition;
             return bubbleTile;
         }
+
+        internal void AddBubbleTile(BubbleTile bubbleTile)
+        {
+            bubbleTile.CachedTransform.SetParent(_cachedTransform);
+        }
     }
 }

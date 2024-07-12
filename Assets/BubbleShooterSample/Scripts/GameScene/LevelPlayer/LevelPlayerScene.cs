@@ -27,8 +27,9 @@ namespace BubbleShooterSample.LevelPlayer
             _flowPresenter.onColorTileListDictUpdated += _bubblePresenter.UpdateFlowTileListDict;
             _bubblePresenter.onBubbleTileSetUpdated += _gridPresenter.OccupyBubbleTileSet;
             _bubblePresenter.onBubbleTileAdded += _gridPresenter.OccupyBubbleTile;
-            _bubbleShooter.requestClosestTileInfo += _gridPresenter.GetClosestTileInfo;
-            _bubbleShooter.requestBubbleTile += _bubblePresenter.AddBubbleTile;
+            _bubblePresenter.onBubbleSequeceComplete += _bubbleShooter.SetReadyToShoot;
+            _bubbleShooter.requestGettingClosestTileInfo += _gridPresenter.GetClosestTileInfo;
+            _bubbleShooter.requestAddingBubbleTile += _bubblePresenter.AddBubbleTile;
         }
 
         private void OnDisable()
@@ -36,8 +37,9 @@ namespace BubbleShooterSample.LevelPlayer
             _flowPresenter.onColorTileListDictUpdated -= _bubblePresenter.UpdateFlowTileListDict;
             _bubblePresenter.onBubbleTileSetUpdated -= _gridPresenter.OccupyBubbleTileSet;
             _bubblePresenter.onBubbleTileAdded -= _gridPresenter.OccupyBubbleTile;
-            _bubbleShooter.requestClosestTileInfo -= _gridPresenter.GetClosestTileInfo;
-            _bubbleShooter.requestBubbleTile -= _bubblePresenter.AddBubbleTile;
+            _bubblePresenter.onBubbleSequeceComplete -= _bubbleShooter.SetReadyToShoot;
+            _bubbleShooter.requestGettingClosestTileInfo -= _gridPresenter.GetClosestTileInfo;
+            _bubbleShooter.requestAddingBubbleTile -= _bubblePresenter.AddBubbleTile;
         }
 
         protected override void Start()

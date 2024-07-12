@@ -91,7 +91,6 @@ namespace BubbleShooterSample.LevelPlayer
                     {
                         _velocity = Vector3.zero;
                         _isMoving = false;
-                        nextPosition = hitPosition;
 
                         _hitBubbleTransformList.Clear();
                         Collider2D[] colliders = Physics2D.OverlapCircleAll(hitPosition, _radius, LayerMaskValue.BubbleHitLayer);
