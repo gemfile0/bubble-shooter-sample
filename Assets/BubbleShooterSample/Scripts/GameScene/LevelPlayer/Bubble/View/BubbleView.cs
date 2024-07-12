@@ -1,4 +1,5 @@
 using BubbleShooterSample.Helper;
+using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace BubbleShooterSample.LevelPlayer
         private Transform _cachedTransform;
 
         private GameObjectPool<BubbleTile> _bubbleTilePool;
-        private Dictionary<Vector2Int, BubbleTile> _bubbleTileDict;
+        private Dictionary<int, BubbleTile> _bubbleTileDict;
 
         private void Awake()
         {
@@ -29,10 +30,15 @@ namespace BubbleShooterSample.LevelPlayer
             _bubbleTileDict = new();
         }
 
-        public BubbleTile CreateBubbleTile(Vector2Int tileIndex, Color bubbleColor, Vector2 tilePosition)
+        public BubbleTile GetOrCreateBubbleTile(int tileIndex, Color bubbleColor, Vector2 tilePosition)
         {
-            BubbleTile bubbleTile = CreateBubbleTile(bubbleColor, tilePosition);
-            _bubbleTileDict.Add(tileIndex, bubbleTile);
+            if (_bubbleTileDict.TryGetValue(tileIndex, out BubbleTile bubbleTile) == false)
+            {
+                //Debug.Log("CreateBubbleTile");
+                bubbleTile = CreateBubbleTile(bubbleColor, tilePosition);
+                _bubbleTileDict.Add(tileIndex, bubbleTile);
+            }
+
             return bubbleTile;
         }
 
@@ -45,27 +51,29 @@ namespace BubbleShooterSample.LevelPlayer
             return bubbleTile;
         }
 
-        internal void AddBubbleTile(Vector2Int tileIndex, BubbleTile bubbleTile)
+        internal void AddBubbleTile(int tileID, BubbleTile bubbleTile)
         {
-            _bubbleTileDict.Add(tileIndex, bubbleTile);
+            _bubbleTileDict.Add(tileID, bubbleTile);
             bubbleTile.CachedTransform.SetParent(_cachedTransform);
         }
 
-        internal void RemoveBubbleTile(Vector2Int bubbleTileIndex)
+        internal void RemoveBubbleTile(int tileID)
         {
-            if (_bubbleTileDict.TryGetValue(bubbleTileIndex, out BubbleTile bubbleTile))
+            if (_bubbleTileDict.TryGetValue(tileID, out BubbleTile bubbleTile))
             {
-                _bubbleTileDict.Remove(bubbleTileIndex);
+                _bubbleTileDict.Remove(tileID);
 
+                bubbleTile.DOKill();
+                bubbleTile.CachedTransform.position = Vector3.zero;
                 _bubbleTilePool.Release(bubbleTile);
             }
         }
 
-        internal BubbleTile GetBubbleTile(Vector2Int bubbleTileIndex)
+        internal BubbleTile GetBubbleTile(int tileID)
         {
-            if (_bubbleTileDict.TryGetValue(bubbleTileIndex, out BubbleTile bubbleTile) == false)
+            if (_bubbleTileDict.TryGetValue(tileID, out BubbleTile bubbleTile) == false)
             {
-                Debug.LogWarning($"GetBubbleTile : 타일이 존재하지 않는 인덱스입니다, {bubbleTileIndex}");
+                Debug.LogWarning($"GetBubbleTile : 타일이 존재하지 않는 인덱스입니다, {tileID}");
             }
             return bubbleTile;
         }

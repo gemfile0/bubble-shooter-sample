@@ -35,7 +35,6 @@ namespace BubbleShooterSample.LevelPlayer
         [SerializeField] private float _bumpDistance = 0.1f;
 
         public event Func<Vector2, ClosestTileInfo> requestGettingClosestTileInfo;
-        public event Action<Vector2Int, BubbleTile> requestAddingBubbleTile;
 
         private const int MaxReflections = 2;
         private const float ColliderOffset = 0.01f;
@@ -167,7 +166,7 @@ namespace BubbleShooterSample.LevelPlayer
             float snappingDurationHalf = _snappingDuration / 2f;
             Sequence sequence = DOTween.Sequence();
             sequence.Append(bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, _snappingDuration));
-            sequence.InsertCallback(snappingDurationHalf, () => requestAddingBubbleTile(closestTileInfo.Index, bubbleTile));
+            sequence.InsertCallback(snappingDurationHalf, () => _bubblePresenter.AddBubbleTile(closestTileInfo.Index, bubbleTile));
         }
 
         private void Update()

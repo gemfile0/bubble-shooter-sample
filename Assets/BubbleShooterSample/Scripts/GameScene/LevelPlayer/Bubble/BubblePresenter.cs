@@ -42,12 +42,12 @@ namespace BubbleShooterSample.LevelPlayer
         // 같은 색상의 버블을 제거하기 위한 용도
         private HashSet<Vector2Int> _visitedIndexSet;
         private Queue<Vector2Int> _sameBubbleTileQueue;
-        private List<Vector2Int> _sameBubbleTileIndexList;
+        private List<(Vector2Int, int)> _sameBubbleTileIndexList;
 
         // 뿌리로부터 연결된 버블을 찾기 위한 용도
         private HashSet<Vector2Int> _connectedIndexSet;
         private Queue<Vector2Int> _connectedTileQueue;
-        private List<Vector2Int> _unconnectedTileIndexList;
+        private List<(Vector2Int, int)> _unconnectedTileIndexList;
 
         private void Awake()
         {
@@ -62,42 +62,70 @@ namespace BubbleShooterSample.LevelPlayer
 
         internal void UpdateFlowTileListDict(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> colorTileListDict)
         {
-            _bubbleModel.FillBubbleTileList(colorTileListDict, GetRandomBubbleTileColor);
+            _bubbleModel.FeedBubbleTileList(colorTileListDict, GetRandomBubbleTileColor);
 
+            StartCoroutine(FeedBubblesCoroutine());
+        }
+
+        private IEnumerator FeedBubblesCoroutine()
+        {
+            yield return FeedBubbles();
+
+            OnBubbleSequenceComplete();
+        }
+
+        private IEnumerator FeedBubbles()
+        {
             // A-1. 버블 생성 연출
             Sequence totalSequence = DOTween.Sequence();
-            foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileList)
+            foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileDict.Values)
             {
-                BubbleTilePathNode headPathNode = tileModel.HeadPathNode;
+                BubbleTilePathNode? firstPathNode = tileModel.FirstPathNode;
+                if (firstPathNode == null)
+                {
+                    continue;
+                }
+
+                //Debug.Log($"=====");
+                int tileID = tileModel.TileID;
                 Color bubbleColor = tileModel.BubbleColor;
-                Vector2Int tileIndex = tileModel.TileIndex;
-                BubbleTile bubbleTile = _bubbleView.CreateBubbleTile(tileIndex, bubbleColor, headPathNode.TilePosition);
+                BubbleTile bubbleTile = _bubbleView.GetOrCreateBubbleTile(tileID, bubbleColor, firstPathNode.Value.NextTilePosition);
 
                 Sequence sequence = DOTween.Sequence();
                 float moveDuration = _bubbleView.MoveDuration;
                 float fadeDuration = moveDuration * .5f;
-                foreach (BubbleTilePathNode node in tileModel.MovementPathNodeList)
+                //Debug.Log($"FeedBubbles 1 : {tileID}");
+                foreach (BubbleTilePathNode node in tileModel.PathNodeQueue)
                 {
+                    int turn = node.Turn;
+                    Vector2 prevTilePosition = node.PrevTilePosition;
+                    Vector2 nextTilePosition = node.NextTilePosition;
+
                     // A-2. 생성된 지점에서는 연출 생략 (bubbleTile.SpriteRenderer.color.a 값이 0 인 상태로 존재)
-                    if (bubbleTile.CachedTransform.position == node.TilePosition)
+                    if ((Vector2)bubbleTile.CachedTransform.position == nextTilePosition)
                     {
                         continue;
                     }
 
-                    Vector2 tilePosition = node.TilePosition;
-                    int turn = node.Turn;
+                    //Debug.Log($"FeedBubbles 2 : {turn}, {node.NextTileIndex}, {bubbleTile.CachedTransform.position} -> {node.NextTilePosition}");
+                    sequence.InsertCallback(turn * moveDuration, () =>
+                    {
+                        bubbleTile.CachedTransform.position = prevTilePosition;
+                    });
                     sequence.Insert(turn * moveDuration,
-                                    bubbleTile.CachedTransform.DOMove(tilePosition, moveDuration).SetEase(Ease.Linear));
+                                    bubbleTile.CachedTransform.DOMove(nextTilePosition, moveDuration).SetEase(Ease.Linear));
+
                     // A-3. 이동을 시작할 때 FadeIn 연출
                     if (bubbleTile.SpriteRenderer.color.a == 0f)
                     {
                         sequence.Join(bubbleTile.SpriteRenderer.DOFade(1f, fadeDuration));
                     }
                 }
-                totalSequence.Join(sequence);
+                tileModel.ConsumePathNodeList();
+                totalSequence.Insert(0f, sequence);
             }
             totalSequence.SetEase(_sequenceEase);
-            totalSequence.OnComplete(OnBubbleSequenceComplete);
+            yield return totalSequence.WaitForCompletion();
         }
 
         private void OnBubbleSequenceComplete()
@@ -131,26 +159,27 @@ namespace BubbleShooterSample.LevelPlayer
             }
 
             // 연결되지 않은 버블 제거
-            if (_connectedIndexSet.Count != _bubbleModel.BubbleTileList.Count)
+            if (_connectedIndexSet.Count != _bubbleModel.BubbleTileDict.Count)
             {
                 float fadeDuration = _bubbleView.MoveDuration * .5f;
 
-                foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileList)
+                foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileDict.Values)
                 {
                     Vector2Int tileIndex = tileModel.TileIndex;
+                    int tileID = tileModel.TileID;
                     if (_connectedIndexSet.Contains(tileIndex))
                     {
                         continue;
                     }
 
-                    _unconnectedTileIndexList.Add(tileIndex);
+                    _unconnectedTileIndexList.Add((tileIndex, tileID));
                 }
 
                 Sequence sequence = DOTween.Sequence();
-                foreach (Vector2Int tileIndex in _unconnectedTileIndexList)
+                foreach ((Vector2Int tileIndex, int tileID) in _unconnectedTileIndexList)
                 {
                     _bubbleModel.RemoveBubbleTile(tileIndex);
-                    BubbleTile removingTile = _bubbleView.GetBubbleTile(tileIndex);
+                    BubbleTile removingTile = _bubbleView.GetBubbleTile(tileID);
                     if (removingTile != null)
                     {
                         removingTile.DOKill();
@@ -159,9 +188,9 @@ namespace BubbleShooterSample.LevelPlayer
                 }
                 yield return sequence.WaitForCompletion();
 
-                foreach (Vector2Int bubbleTileIndex in _unconnectedTileIndexList)
+                foreach ((Vector2Int tileIndex, int tileID) in _unconnectedTileIndexList)
                 {
-                    _bubbleView.RemoveBubbleTile(bubbleTileIndex);
+                    _bubbleView.RemoveBubbleTile(tileID);
                 }
             }
 
@@ -191,10 +220,10 @@ namespace BubbleShooterSample.LevelPlayer
         internal void AddBubbleTile(Vector2Int tileIndex, BubbleTile bubbleTile)
         {
             _bubbleModel.AddBubbleTile(tileIndex, bubbleTile.BubbleColor);
-            _bubbleView.AddBubbleTile(tileIndex, bubbleTile);
+            int tileID = _bubbleModel.GetBubbleTile(tileIndex).TileID;
+            _bubbleView.AddBubbleTile(tileID, bubbleTile);
 
             StartCoroutine(RemoveBubblesCoroutine(tileIndex));
-
         }
 
         private IEnumerator RemoveBubblesCoroutine(Vector2Int tileIndex)
@@ -202,6 +231,9 @@ namespace BubbleShooterSample.LevelPlayer
             yield return RemoveSameBubbles(tileIndex);
 
             yield return DropUnconnectedBubbles();
+
+            _bubbleModel.FeedBubbleTileList();
+            yield return FeedBubbles();
 
             OnBubbleSequenceComplete();
         }
@@ -218,7 +250,8 @@ namespace BubbleShooterSample.LevelPlayer
             while (_sameBubbleTileQueue.Count > 0)
             {
                 Vector2Int current = _sameBubbleTileQueue.Dequeue();
-                _sameBubbleTileIndexList.Add(current);
+                int tileID = _bubbleModel.GetBubbleTile(current).TileID;
+                _sameBubbleTileIndexList.Add((current, tileID));
 
                 foreach (Vector2Int neighborIndex in requestGettingNeighborIndexList(current, _visitedIndexSet))
                 {
@@ -234,10 +267,10 @@ namespace BubbleShooterSample.LevelPlayer
             {
                 float fadeDuration = _bubbleView.MoveDuration * .5f;
                 Sequence sequence = DOTween.Sequence();
-                foreach (Vector2Int bubbleTileIndex in _sameBubbleTileIndexList)
+                foreach ((Vector2Int bubbleTileIndex, int tileID) in _sameBubbleTileIndexList)
                 {
                     _bubbleModel.RemoveBubbleTile(bubbleTileIndex);
-                    BubbleTile removingTile = _bubbleView.GetBubbleTile(bubbleTileIndex);
+                    BubbleTile removingTile = _bubbleView.GetBubbleTile(tileID);
                     if (removingTile != null)
                     {
                         removingTile.DOKill();
@@ -246,9 +279,9 @@ namespace BubbleShooterSample.LevelPlayer
                 }
                 yield return sequence.WaitForCompletion();
 
-                foreach (Vector2Int bubbleTileIndex in _sameBubbleTileIndexList)
+                foreach ((Vector2Int bubbleTileIndex, int tileID) in _sameBubbleTileIndexList)
                 {
-                    _bubbleView.RemoveBubbleTile(bubbleTileIndex);
+                    _bubbleView.RemoveBubbleTile(tileID);
                 }
             }
 

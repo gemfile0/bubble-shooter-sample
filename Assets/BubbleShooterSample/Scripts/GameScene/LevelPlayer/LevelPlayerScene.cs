@@ -33,7 +33,6 @@ namespace BubbleShooterSample.LevelPlayer
             _bubblePresenter.requestGettingNeighborIndexList += _gridPresenter.GetNeighborIndexList;
 
             _bubbleShooter.requestGettingClosestTileInfo += _gridPresenter.GetClosestTileInfo;
-            _bubbleShooter.requestAddingBubbleTile += _bubblePresenter.AddBubbleTile;
         }
 
         private void OnDisable()
@@ -47,7 +46,6 @@ namespace BubbleShooterSample.LevelPlayer
             _bubblePresenter.requestGettingNeighborIndexList -= _gridPresenter.GetNeighborIndexList;
 
             _bubbleShooter.requestGettingClosestTileInfo -= _gridPresenter.GetClosestTileInfo;
-            _bubbleShooter.requestAddingBubbleTile -= _bubblePresenter.AddBubbleTile;
         }
 
         protected override void Start()
