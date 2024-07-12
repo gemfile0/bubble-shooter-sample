@@ -20,7 +20,6 @@ namespace BubbleShooterSample.LevelPlayer
         [Header("Shooter Transform")]
         [SerializeField] private Transform _shooterTransform;
         [SerializeField] private float _shooterPositionY = -5f;
-        [SerializeField] private float _setupDuration = .5f;
 
         [Header("Guide Line")]
         [SerializeField] private LineRenderer _guideLineRenderer;

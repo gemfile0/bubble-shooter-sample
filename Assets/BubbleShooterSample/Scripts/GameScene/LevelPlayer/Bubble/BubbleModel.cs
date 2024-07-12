@@ -24,6 +24,7 @@ namespace BubbleShooterSample.LevelPlayer
         public Color BubbleColor { get; }
         public BubbleTilePathNode HeadPathNode { get; }
         public IEnumerable<BubbleTilePathNode> MovementPathNodeList { get; }
+        public Vector2Int TileIndex { get; }
     }
 
     public class BubbleTileModel : IBubbleTileModel
@@ -31,8 +32,8 @@ namespace BubbleShooterSample.LevelPlayer
         public Color BubbleColor => _bubbleColor;
         public BubbleTilePathNode HeadPathNode => _movementPathNodeList[0];
         public IEnumerable<BubbleTilePathNode> MovementPathNodeList => _movementPathNodeList;
-
         public Vector2Int TileIndex => _tileIndex;
+
         public Color TileColor => _tileColor;
 
         private Vector2Int _tileIndex;
@@ -40,6 +41,12 @@ namespace BubbleShooterSample.LevelPlayer
         private List<BubbleTilePathNode> _movementPathNodeList;
         private LinkedListNode<IFlowTileModel> _currentNode;
         private Color _bubbleColor;
+
+        public BubbleTileModel(Vector2Int tileIndex, Color bubbleColor)
+        {
+            _tileIndex = tileIndex;
+            _bubbleColor = bubbleColor;
+        }
 
         public BubbleTileModel(Vector2Int tileIndex, Color tileColor, Color bubbleColor, Vector2 tilePosition, int turn, LinkedListNode<IFlowTileModel> currentNode)
         {
@@ -65,8 +72,9 @@ namespace BubbleShooterSample.LevelPlayer
 
     public class BubbleModel : MonoBehaviour
     {
-        public event Action<IReadOnlyCollection<Vector2Int>> onBubbleTileSetUpdated;
+        public event Action<IReadOnlyDictionary<Vector2Int, IBubbleTileModel>> onBubbleTileDictUpdated;
         public event Action<Vector2Int> onBubbleTileAdded;
+        public event Action<Vector2Int> onBubbleTileRemoved;
 
         public IEnumerable<IBubbleTileModel> BubbleTileList => _bubbleTileList;
 
@@ -75,7 +83,7 @@ namespace BubbleShooterSample.LevelPlayer
         private int _currentTurn;
         private List<BubbleTileModel> _bubbleTileList;
         private List<BubbleTileModel> _newBubbleTileList;
-        private HashSet<Vector2Int> _bubbleTileSet;
+        private Dictionary<Vector2Int, IBubbleTileModel> _bubbleTileDict;
 
         private IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> _flowTileListDict;
         private Func<Color> _getRandomBubbleTileColor;
@@ -85,7 +93,7 @@ namespace BubbleShooterSample.LevelPlayer
             _currentTurn = 0;
             _bubbleTileList = new();
             _newBubbleTileList = new();
-            _bubbleTileSet = new();
+            _bubbleTileDict = new();
         }
 
         internal void FillBubbleTileList(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> flowTileListDict,
@@ -110,12 +118,12 @@ namespace BubbleShooterSample.LevelPlayer
             }
 
             // 모든 이동이 완료된 후 포지션 등록
-            _bubbleTileSet.Clear();
+            _bubbleTileDict.Clear();
             foreach (BubbleTileModel bubbleTile in _bubbleTileList)
             {
-                _bubbleTileSet.Add(bubbleTile.TileIndex);
+                _bubbleTileDict.Add(bubbleTile.TileIndex, bubbleTile);
             }
-            onBubbleTileSetUpdated?.Invoke(_bubbleTileSet);
+            onBubbleTileDictUpdated?.Invoke(_bubbleTileDict);
 
             //첫 번째 BubbleTileModel의 이동 경로를 로그로 출력
             //if (_bubbleTileList.Count > 0)
@@ -177,10 +185,31 @@ namespace BubbleShooterSample.LevelPlayer
             return result;
         }
 
-        internal void AddBubbleTile(Vector2Int tileIndex)
+        internal void AddBubbleTile(Vector2Int tileIndex, Color bubbleColor)
         {
-            _bubbleTileSet.Add(tileIndex);
+            BubbleTileModel bubbleTileModel = new(tileIndex, bubbleColor);
+            _bubbleTileDict.Add(tileIndex, bubbleTileModel);
             onBubbleTileAdded?.Invoke(tileIndex);
+        }
+
+        internal Color GetBubbleColor(Vector2Int tileIndex)
+        {
+            Color result = Color.clear;
+            if (_bubbleTileDict.TryGetValue(tileIndex, out IBubbleTileModel bubbleTileModel))
+            {
+                result = bubbleTileModel.BubbleColor;
+            }
+            else
+            {
+                Debug.LogWarning($"GetBubbleColor : 버블이 존재하지 않는 타일입니다, {tileIndex}");
+            }
+            return result;
+        }
+
+        internal void RemoveBubbleTile(Vector2Int bubbleTileIndex)
+        {
+            _bubbleTileDict.Remove(bubbleTileIndex);
+            onBubbleTileRemoved?.Invoke(bubbleTileIndex);
         }
     }
 }

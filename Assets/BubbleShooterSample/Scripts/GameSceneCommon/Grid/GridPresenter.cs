@@ -1,3 +1,4 @@
+using BubbleShooterSample.LevelPlayer;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -70,11 +71,12 @@ namespace BubbleShooterSample
             return closestTileInfo;
         }
 
-        internal void OccupyBubbleTileSet(IReadOnlyCollection<Vector2Int> bubbleTileSet)
+        internal void OccupyBubbleTileSet(IReadOnlyDictionary<Vector2Int, IBubbleTileModel> bubbleTileDict)
         {
             _gridModel.ClearOccupiedTiles();
-            foreach (Vector2Int tileIndex in bubbleTileSet)
+            foreach (var pair in bubbleTileDict)
             {
+                Vector2Int tileIndex = pair.Key;
                 _gridModel.OccupyTile(tileIndex);
             }
         }
@@ -82,6 +84,11 @@ namespace BubbleShooterSample
         internal void OccupyBubbleTile(Vector2Int tileIndex)
         {
             _gridModel.OccupyTile(tileIndex);
+        }
+
+        public IEnumerable<Vector2Int> GetNeighborIndexList(Vector2Int tileIndex, HashSet<Vector2Int> visitedIndexSet)
+        {
+            return _gridModel.GetNeighborIndexList(tileIndex, visitedIndexSet);
         }
     }
 }

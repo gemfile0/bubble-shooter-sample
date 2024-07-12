@@ -27,6 +27,7 @@ namespace BubbleShooterSample.LevelPlayer
         private Transform _cachedTransform;
 
         public SpriteRenderer SpriteRenderer => _spriteRenderer;
+        public Color BubbleColor { get; private set; }
 
         private Vector3 _velocity;
         private bool _isMoving = false;
@@ -36,6 +37,8 @@ namespace BubbleShooterSample.LevelPlayer
 
         public void Init(Color bubbleColor)
         {
+            BubbleColor = bubbleColor;
+
             bubbleColor.a = 0f;
             _spriteRenderer.color = bubbleColor;
 

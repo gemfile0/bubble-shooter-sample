@@ -11,6 +11,7 @@ namespace BubbleShooterSample
         public IEnumerable<Vector2Int> OccupiedTileSet => _occupiedTileSet;
         private HashSet<Vector2Int> _occupiedTileSet;
         private List<Vector2Int> _neighborIndexList;
+        private HashSet<Vector2Int> _visitedIndexSet;
 
         public void Init()
         {
@@ -48,8 +49,10 @@ namespace BubbleShooterSample
             _occupiedTileSet.Remove(tileIndex);
         }
 
-        public IEnumerable<Vector2Int> GetNeighborIndexList(Vector2Int tileIndex)
+        public IEnumerable<Vector2Int> GetNeighborIndexList(Vector2Int tileIndex, HashSet<Vector2Int> visitedIndexSet)
         {
+            _visitedIndexSet = visitedIndexSet;
+
             _neighborIndexList.Clear();
             AddIfExists(new Vector2Int(tileIndex.x - 1, tileIndex.y));  // left
             AddIfExists(new Vector2Int(tileIndex.x + 1, tileIndex.y));  // right
@@ -73,7 +76,7 @@ namespace BubbleShooterSample
         private void AddIfExists(Vector2Int tileIndex)
         {
             if (_gridTileIndexSet.Contains(tileIndex)
-                && _occupiedTileSet.Contains(tileIndex) == false)
+                && _visitedIndexSet?.Contains(tileIndex) == false)
             {
                 _neighborIndexList.Add(tileIndex);
             }
