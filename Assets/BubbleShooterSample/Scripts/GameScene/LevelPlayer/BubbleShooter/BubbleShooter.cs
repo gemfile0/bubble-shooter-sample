@@ -105,7 +105,7 @@ namespace BubbleShooterSample.LevelPlayer
 
             Sequence sequence = DOTween.Sequence();
             sequence.Append(_bubbleTile.CachedTransform.DOPath(path, _snappingDuration, PathType.CatmullRom))
-                    .Join(_bubbleTile.SpriteRenderer.DOFade(1f, _snappingDuration))
+                    .Join(_bubbleTile.DOFade(1f, _snappingDuration))
                     .OnComplete(OnSetupShooterComplete);
         }
 

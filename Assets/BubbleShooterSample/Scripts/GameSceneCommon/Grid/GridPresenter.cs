@@ -27,6 +27,7 @@ namespace BubbleShooterSample
         private void Awake()
         {
             _gridModel.Init();
+            _gridView.Init();
         }
 
         public void Init()

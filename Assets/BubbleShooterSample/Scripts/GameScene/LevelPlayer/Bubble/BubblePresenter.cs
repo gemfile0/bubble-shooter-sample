@@ -89,7 +89,8 @@ namespace BubbleShooterSample.LevelPlayer
                 //Debug.Log($"=====");
                 int tileID = tileModel.TileID;
                 Color bubbleColor = tileModel.BubbleColor;
-                BubbleTile bubbleTile = _bubbleView.GetOrCreateBubbleTile(tileID, bubbleColor, firstPathNode.Value.NextTilePosition);
+                int attackPoint = tileModel.AttackPoint;
+                BubbleTile bubbleTile = _bubbleView.GetOrCreateBubbleTile(tileID, bubbleColor, attackPoint > 0, firstPathNode.Value.NextTilePosition);
 
                 Sequence sequence = DOTween.Sequence();
                 float moveDuration = _bubbleView.MoveDuration;
@@ -116,9 +117,9 @@ namespace BubbleShooterSample.LevelPlayer
                                     bubbleTile.CachedTransform.DOMove(nextTilePosition, moveDuration).SetEase(Ease.Linear));
 
                     // A-3. 이동을 시작할 때 FadeIn 연출
-                    if (bubbleTile.SpriteRenderer.color.a == 0f)
+                    if (bubbleTile.IsAlphaValue(0f))
                     {
-                        sequence.Join(bubbleTile.SpriteRenderer.DOFade(1f, fadeDuration));
+                        sequence.Join(bubbleTile.DOFade(1f, fadeDuration));
                     }
                 }
                 tileModel.ConsumePathNodeList();
@@ -183,7 +184,7 @@ namespace BubbleShooterSample.LevelPlayer
                     if (removingTile != null)
                     {
                         removingTile.DOKill();
-                        sequence.Join(removingTile.SpriteRenderer.DOFade(0f, fadeDuration));
+                        sequence.Join(removingTile.DOFade(0f, fadeDuration));
                     }
                 }
                 yield return sequence.WaitForCompletion();
@@ -210,10 +211,11 @@ namespace BubbleShooterSample.LevelPlayer
             return _bubbleTileColorList[randomIndex];
         }
 
+        // BubbleShooter 로부터 호출
         public BubbleTile CreateBubbleTile(Vector2 tilePosition)
         {
             Color bubbleColor = GetRandomBubbleTileColor();
-            BubbleTile bubbleTile = _bubbleView.CreateBubbleTile(bubbleColor, tilePosition);
+            BubbleTile bubbleTile = _bubbleView.CreateBubbleTile(bubbleColor, hasAttackPoint: false, tilePosition);
             return bubbleTile;
         }
 
@@ -274,7 +276,7 @@ namespace BubbleShooterSample.LevelPlayer
                     if (removingTile != null)
                     {
                         removingTile.DOKill();
-                        sequence.Join(removingTile.SpriteRenderer.DOFade(0f, fadeDuration));
+                        sequence.Join(removingTile.DOFade(0f, fadeDuration));
                     }
                 }
                 yield return sequence.WaitForCompletion();

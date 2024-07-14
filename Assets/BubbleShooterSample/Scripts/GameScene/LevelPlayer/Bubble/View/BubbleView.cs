@@ -30,22 +30,22 @@ namespace BubbleShooterSample.LevelPlayer
             _bubbleTileDict = new();
         }
 
-        public BubbleTile GetOrCreateBubbleTile(int tileIndex, Color bubbleColor, Vector2 tilePosition)
+        public BubbleTile GetOrCreateBubbleTile(int tileIndex, Color bubbleColor, bool hasAttackPoint, Vector2 tilePosition)
         {
             if (_bubbleTileDict.TryGetValue(tileIndex, out BubbleTile bubbleTile) == false)
             {
                 //Debug.Log("CreateBubbleTile");
-                bubbleTile = CreateBubbleTile(bubbleColor, tilePosition);
+                bubbleTile = CreateBubbleTile(bubbleColor, hasAttackPoint, tilePosition);
                 _bubbleTileDict.Add(tileIndex, bubbleTile);
             }
 
             return bubbleTile;
         }
 
-        internal BubbleTile CreateBubbleTile(Color bubbleColor, Vector2 tilePosition)
+        internal BubbleTile CreateBubbleTile(Color bubbleColor, bool hasAttackPoint, Vector2 tilePosition)
         {
             BubbleTile bubbleTile = _bubbleTilePool.Get();
-            bubbleTile.Init(bubbleColor);
+            bubbleTile.Init(bubbleColor, hasAttackPoint);
             bubbleTile.CachedTransform.SetParent(_cachedTransform);
             bubbleTile.CachedTransform.position = tilePosition;
             return bubbleTile;

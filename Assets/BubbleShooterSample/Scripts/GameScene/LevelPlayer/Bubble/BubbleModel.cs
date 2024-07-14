@@ -28,6 +28,7 @@ namespace BubbleShooterSample.LevelPlayer
         public Vector2Int TileIndex { get; }
         public Color TileColor { get; }
         public Color BubbleColor { get; }
+        public int AttackPoint { get; }
         public BubbleTilePathNode? FirstPathNode { get; }
         public IEnumerable<BubbleTilePathNode> PathNodeQueue { get; }
         public int TileID { get; }
@@ -40,6 +41,7 @@ namespace BubbleShooterSample.LevelPlayer
         public Vector2Int TileIndex => _tileIndex;
         public Color TileColor => _tileColor;
         public Color BubbleColor => _bubbleColor;
+        public int AttackPoint => _attackPoint;
         public BubbleTilePathNode? FirstPathNode
         {
             get
@@ -73,11 +75,14 @@ namespace BubbleShooterSample.LevelPlayer
         private Vector2Int _tileIndex;
         private Vector2 _tilePosition;
         private Color _tileColor;
+        private Color _bubbleColor;
+
         private Queue<BubbleTilePathNode> _pathNodeQueue;
         private LinkedListNode<IFlowTileModel> _flowTileNode;
-        private Color _bubbleColor;
+        private int _attackPoint;
         private int _tileID;
 
+        // A-1. BubbleShooter 에서 쏘아올린 버블
         public BubbleTileModel(Vector2Int tileIndex, Color bubbleColor)
         {
             _tileIndex = tileIndex;
@@ -85,7 +90,8 @@ namespace BubbleShooterSample.LevelPlayer
             _tileID = NextID++;
         }
 
-        public BubbleTileModel(Vector2Int tileIndex, Vector2 tilePosition, Color tileColor, Color bubbleColor, int turn, LinkedListNode<IFlowTileModel> flowTileNode)
+        // A-2. FlowTileModel 로부터 생성되는 버블
+        public BubbleTileModel(Vector2Int tileIndex, Vector2 tilePosition, Color tileColor, Color bubbleColor, int attackPoint, int turn, LinkedListNode<IFlowTileModel> flowTileNode)
         {
             _tileIndex = tileIndex;
             _tilePosition = tilePosition;
@@ -95,6 +101,7 @@ namespace BubbleShooterSample.LevelPlayer
             _pathNodeQueue = new();
             _pathNodeQueue.Enqueue(new BubbleTilePathNode(tileIndex, tilePosition, tileIndex, tilePosition, turn));
             _flowTileNode = flowTileNode;
+            _attackPoint = attackPoint;
 
             _tileID = NextID++;
         }
@@ -243,7 +250,8 @@ namespace BubbleShooterSample.LevelPlayer
                     Color tileColor = pair.Key;
                     Vector2 tilePosition = headFlowTileNode.Value.TilePosition;
                     Color bubbleColor = _GetRandomBubbleTileColor();
-                    BubbleTileModel bubbleTile = new(tileIndex, tilePosition, tileColor, bubbleColor, _currentTurn, headFlowTileNode);
+                    int attackPoint = UnityEngine.Random.Range(0, 4) == 0 ? 5 : 0; // 1/4 확률로 5점 공격 포인트
+                    BubbleTileModel bubbleTile = new(tileIndex, tilePosition, tileColor, bubbleColor, attackPoint, _currentTurn, headFlowTileNode);
                     _newFlowBubbleList.Add(bubbleTile);
                     _bubbleTileDict.Add(tileIndex, bubbleTile);
                 }

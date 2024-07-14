@@ -42,7 +42,7 @@ namespace BubbleShooterSample
         }
         private Dictionary<Vector2Int, IGridTile> _gridTileDict;
 
-        private void Awake()
+        internal void Init()
         {
             _cachedTransform = transform;
 

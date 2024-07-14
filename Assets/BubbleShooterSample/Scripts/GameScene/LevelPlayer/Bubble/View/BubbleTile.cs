@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace BubbleShooterSample.LevelPlayer
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private CircleCollider2D _collider2D;
         [SerializeField] private Rigidbody2D _rigidbody2D;
+        [SerializeField] private AttackPointView _attackPointView;
 
         public event Action<IEnumerable<Transform>> onHit;
 
@@ -26,30 +28,36 @@ namespace BubbleShooterSample.LevelPlayer
         }
         private Transform _cachedTransform;
 
-        public SpriteRenderer SpriteRenderer => _spriteRenderer;
         public Color BubbleColor { get; private set; }
 
         private Vector3 _velocity;
         private Coroutine _moveCoroutine;
         private float _radius;
         private List<Transform> _hitBubbleTransformList;
+        private SpriteRenderer[] _spriteRendererList;
 
-        public void Init(Color bubbleColor)
+        public void Init(Color bubbleColor, bool hasAttackPoint)
         {
+            _spriteRendererList = GetComponentsInChildren<SpriteRenderer>();
             BubbleColor = bubbleColor;
-
-            bubbleColor.a = 0f;
-            _spriteRenderer.color = bubbleColor;
+            _spriteRenderer.color = BubbleColor;
+            SetRendererAlpha(0f);
 
             _radius = _collider2D.radius * transform.localScale.x;
             _hitBubbleTransformList = new();
+
+            _attackPointView.gameObject.SetActive(hasAttackPoint);
+            _attackPointView.Init();
         }
 
         public void SetRendererAlpha(float value)
         {
-            Color bubbleColor = _spriteRenderer.color;
-            bubbleColor.a = value;
-            _spriteRenderer.color = bubbleColor;
+            foreach (SpriteRenderer spriteRenderer in _spriteRendererList)
+            {
+                Color originColor = spriteRenderer.color;
+                originColor.a = value;
+                spriteRenderer.color = originColor;
+            }
         }
 
         public void SetColliderEnabled(bool value)
@@ -124,6 +132,21 @@ namespace BubbleShooterSample.LevelPlayer
 
                 onHit?.Invoke(_hitBubbleTransformList);
             }
+        }
+
+        internal Tween DOFade(float value, float duration)
+        {
+            Sequence sequence = DOTween.Sequence();
+            foreach (SpriteRenderer spriteRenderer in _spriteRendererList)
+            {
+                sequence.Join(spriteRenderer.DOFade(value, duration));
+            }
+            return sequence;
+        }
+
+        internal bool IsAlphaValue(float v)
+        {
+            return _spriteRenderer.color.a == v;
         }
     }
 }
