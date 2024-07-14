@@ -176,24 +176,30 @@ namespace BubbleShooterSample.LevelPlayer
                     _unconnectedTileIndexList.Add((tileIndex, tileID));
                 }
 
-                Sequence sequence = DOTween.Sequence();
+                //Sequence sequence = DOTween.Sequence();
                 float fadeDuration = _bubbleData.FadeBubbleDuration;
+                Vector2 droppingForceRange = _bubbleData.DroppingForceRange;
+                float droppingGravityScale = _bubbleData.DroppingGravityScale;
                 foreach ((Vector2Int tileIndex, int tileID) in _unconnectedTileIndexList)
                 {
                     _bubbleModel.RemoveBubbleTile(tileIndex);
                     BubbleTile removingTile = _bubbleView.GetBubbleTile(tileID);
-                    removingTile.DOKill();
+
+                    float droppingForce = UnityEngine.Random.Range(droppingForceRange.x, droppingForceRange.y);
+                    removingTile.Drop(droppingForce, droppingGravityScale);
+                    //removingTile.DOKill();
                     foreach (SpriteRenderer spriteRenderer in removingTile.SpriteRendererList)
                     {
-                        sequence.Join(spriteRenderer.DOFade(0f, fadeDuration));
+                        //sequence.Join(spriteRenderer.DOFade(0f, fadeDuration));
                     }
                 }
-                yield return sequence.WaitForCompletion();
+                yield return new WaitForSeconds(3f);
+                //yield return sequence.WaitForCompletion();
 
-                foreach ((Vector2Int tileIndex, int tileID) in _unconnectedTileIndexList)
-                {
-                    _bubbleView.RemoveBubbleTile(tileID);
-                }
+                //foreach ((Vector2Int tileIndex, int tileID) in _unconnectedTileIndexList)
+                //{
+                //    _bubbleView.RemoveBubbleTile(tileID);
+                //}
             }
 
             _unconnectedTileIndexList.Clear();

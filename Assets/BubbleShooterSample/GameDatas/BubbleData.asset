@@ -20,3 +20,5 @@ MonoBehaviour:
   _feedBubbleSequenceEase: 4
   _moveBubbleDuration: 0.25
   _fadeBubbleDuration: 0.125
+  _droppingGravityScale: 6
+  _droppingForceRange: {x: 2, y: 4}

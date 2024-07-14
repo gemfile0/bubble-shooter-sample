@@ -2093,8 +2093,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 548526437}
   - {fileID: 876663752}
+  - {fileID: 548526437}
   m_Father: {fileID: 985812686}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1776097546
@@ -2109,8 +2109,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43bc4fe1eb017fd4c998562ca5c6af2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _leftWall: {fileID: 548526437}
-  _rightWall: {fileID: 876663752}
+  _leftWall: {fileID: 876663752}
+  _rightWall: {fileID: 548526437}
 --- !u!1 &1840337597
 GameObject:
   m_ObjectHideFlags: 0
