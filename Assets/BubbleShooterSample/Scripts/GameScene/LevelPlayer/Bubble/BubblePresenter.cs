@@ -4,11 +4,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace BubbleShooterSample.LevelPlayer
 {
-    public class BubblePresenter : MonoBehaviour
+    public class BubblePresenter : MonoBehaviour, ILootAnimationTrigger
     {
         [SerializeField] private BubbleData _bubbleData;
         [SerializeField] private BubbleModel _bubbleModel;
@@ -31,11 +32,14 @@ namespace BubbleShooterSample.LevelPlayer
         }
         public event Action onBubbleSequeceComplete;
         public event Func<Vector2Int, HashSet<Vector2Int>, IEnumerable<Vector2Int>> requestGettingNeighborIndexList;
+        public event Action<LootAnimationType, LootAnimationInfo> requestLootAnimation;
 
         // 같은 색상의 버블을 제거하기 위한 용도
         private HashSet<Vector2Int> _visitedIndexSet;
         private Queue<Vector2Int> _sameBubbleTileQueue;
         private List<(Vector2Int, int)> _sameBubbleTileIndexList;
+
+        private List<TaskCompletionSource<bool>> _tcsList;
 
         // 뿌리로부터 연결된 버블을 찾기 위한 용도
         private HashSet<Vector2Int> _connectedIndexSet;
@@ -47,6 +51,8 @@ namespace BubbleShooterSample.LevelPlayer
             _sameBubbleTileIndexList = new();
             _visitedIndexSet = new();
             _sameBubbleTileQueue = new();
+
+            _tcsList = new();
 
             _connectedIndexSet = new();
             _connectedTileQueue = new();
@@ -173,11 +179,8 @@ namespace BubbleShooterSample.LevelPlayer
                 {
                     _bubbleModel.RemoveBubbleTile(tileIndex);
                     BubbleTile removingTile = _bubbleView.GetBubbleTile(tileID);
-                    if (removingTile != null)
-                    {
-                        removingTile.DOKill();
-                        sequence.Join(removingTile.DOFade(0f, fadeDuration));
-                    }
+                    removingTile.DOKill();
+                    sequence.Join(removingTile.DOFade(0f, fadeDuration));
                 }
                 yield return sequence.WaitForCompletion();
 
@@ -225,6 +228,11 @@ namespace BubbleShooterSample.LevelPlayer
 
             yield return DropUnconnectedBubbles();
 
+            foreach (var tcs in _tcsList)
+            {
+                yield return new WaitUntil(() => tcs.Task.IsCompleted);
+            }
+
             _bubbleModel.FeedBubbleTileList();
             yield return FeedBubbles();
 
@@ -258,16 +266,30 @@ namespace BubbleShooterSample.LevelPlayer
             // 같은 색상의 버블이 3개 이상인 경우 제거
             if (_sameBubbleTileIndexList.Count >= 3)
             {
+                _tcsList.Clear();
+
                 float fadeDuration = _bubbleData.FadeBubbleDuration;
                 Sequence sequence = DOTween.Sequence();
                 foreach ((Vector2Int bubbleTileIndex, int tileID) in _sameBubbleTileIndexList)
                 {
-                    _bubbleModel.RemoveBubbleTile(bubbleTileIndex);
+                    IBubbleTileModel removedTileModel = _bubbleModel.RemoveBubbleTile(bubbleTileIndex);
                     BubbleTile removingTile = _bubbleView.GetBubbleTile(tileID);
-                    if (removingTile != null)
+                    removingTile.DOKill();
+                    sequence.Join(removingTile.DOFade(0f, fadeDuration));
+
+                    int attackPoint = removedTileModel.AttackPoint;
+                    if (attackPoint > 0)
                     {
-                        removingTile.DOKill();
-                        sequence.Join(removingTile.DOFade(0f, fadeDuration));
+                        var tcs = new TaskCompletionSource<bool>();
+                        _tcsList.Add(tcs);
+
+                        var lootAnimationInfo = new LootAnimationInfo(
+                            attackPoint,
+                            removingTile.CachedTransform.position,
+                            removingTile.CachedTransform.rotation,
+                            onComplete: () => tcs.SetResult(true)
+                        );
+                        requestLootAnimation(LootAnimationType.AttackPoint, lootAnimationInfo);
                     }
                 }
                 yield return sequence.WaitForCompletion();

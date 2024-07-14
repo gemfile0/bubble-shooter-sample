@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e01181462ad227943a0f6eb60548c725, type: 3}
   m_Name: BubbleShooterData
   m_EditorClassIdentifier: 
-  _guidelineAngleRange: {x: 30, y: 150}
-  _guidelineMaxDistance: 5
+  _guidelineAngleRange: {x: 20, y: 160}
+  _guidelineMaxDistance: 10
   _bubbleSpeed: 12.5
   _bubbleSnappingDuration: 0.25
   _bubbleBumpDistance: 0.1

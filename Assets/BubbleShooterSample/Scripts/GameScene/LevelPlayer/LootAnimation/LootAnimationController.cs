@@ -137,19 +137,20 @@ namespace BubbleShooterSample
 
             Sequence sequence = DOTween.Sequence();
             sequence.Append(attackPointRenderer.SpriteRenderer.DOFade(1f, _lootAnimationData.FadeDuration)
-                                                       .SetEase(_lootAnimationData.FadeEase));
+                                                              .SetEase(_lootAnimationData.FadeEase));
             sequence.Insert(0f, attackPointRenderer.CachedTransform.DORotate(Vector3.up, _lootAnimationData.MoveDuration)
-                                                            .SetEase(_lootAnimationData.MoveEase));
+                                                                   .SetEase(_lootAnimationData.MoveEase));
 
+            Debug.Log($"AnimateAttackPoint : {item.StartPosition} -> {item.EndPosition}");
             Vector3 diff = item.EndPosition - item.StartPosition;
             Vector3 midPoint = item.StartPosition + diff / 2 + Vector3.up * _lootAnimationData.JumpHeight;
             Vector3[] path = new Vector3[] { item.StartPosition, midPoint, item.EndPosition };
             sequence.Insert(0, attackPointRenderer.CachedTransform.DOPath(path, _lootAnimationData.MoveDuration, _lootAnimationData.PathType)
-                                                           .SetEase(_lootAnimationData.MoveEase));
+                                                                  .SetEase(_lootAnimationData.MoveEase));
             sequence.Append(attackPointRenderer.SpriteRenderer.DOFade(0f, _lootAnimationData.FadeDuration)
-                                                       .SetEase(_lootAnimationData.FadeEase));
+                                                              .SetEase(_lootAnimationData.FadeEase));
 
-            sequence.JoinCallback(() => countText.TextMeshPro.text = $"+{item.LootPoint}");
+            sequence.JoinCallback(() => countText.TextMeshPro.text = $"-{item.LootPoint}");
             sequence.Join(countText.CachedTransform.DOMoveY(item.EndPosition.y + _lootAnimationData.TextEndOffsetY, _lootAnimationData.TextDuration)
                                                    .SetEase(_lootAnimationData.TextEase));
             // 텍스트 나타나는 타이밍에 연출 완료

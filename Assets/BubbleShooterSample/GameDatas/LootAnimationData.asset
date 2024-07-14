@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LootAnimationData
   m_EditorClassIdentifier: 
   _spawnDelay: 0.05
-  _jumpHeight: 2
+  _jumpHeight: 0.25
   _moveDuration: 0.75
   _moveEase: 5
   _pathType: 1
