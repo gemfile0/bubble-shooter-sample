@@ -89,7 +89,7 @@ namespace BubbleShooterSample.LevelPlayer
             {
                 Vector3 nextPosition = CachedTransform.position + _velocity * Time.fixedDeltaTime;
 
-                // 벽과의 충돌 감지
+                // A-1. 벽과의 충돌 감지
                 Vector3 raycastStartPosition = CachedTransform.position + _velocity.normalized * (_radius + avoidColliderOffset);
                 RaycastHit2D wallHit = Physics2D.Raycast(
                     origin: raycastStartPosition,
@@ -111,6 +111,7 @@ namespace BubbleShooterSample.LevelPlayer
         private void OnCollisionEnter2D(Collision2D collision)
         {
             int hitLayer = collision.gameObject.layer;
+            // A-2. 버블과의 충돌 감지
             if (hitLayer == LayerMaskValue.NameLayerBubble)
             {
                 StopMoveCoroutine();

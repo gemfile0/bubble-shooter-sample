@@ -4,7 +4,7 @@ namespace BubbleShooterSample
 {
     public class GateKeeperView : MonoBehaviour
     {
-        [SerializeField] SpriteRenderer _spriteRenderer;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
 
         public Transform CachedTransform { get; private set; }
 

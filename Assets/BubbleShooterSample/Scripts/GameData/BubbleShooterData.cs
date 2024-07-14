@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace BubbleShooterSample
@@ -12,6 +13,7 @@ namespace BubbleShooterSample
         [Header("Bubble")]
         [SerializeField] private float _bubbleSpeed = 10f;
         [SerializeField] private float _bubbleSnappingDuration = .25f;
+        [SerializeField] private Ease _bubbleSnappingEase = Ease.OutQuad;
         [SerializeField] private float _bubbleBumpDistance = 0.1f;
 
         public Vector2 GuidelineAngleRange => _guidelineAngleRange;
@@ -19,6 +21,7 @@ namespace BubbleShooterSample
 
         public float BubbleSpeed => _bubbleSpeed;
         public float BubbleSnappingDuration => _bubbleSnappingDuration;
+        public Ease BubbleSnappingEase => _bubbleSnappingEase;
         public float BubbleBumpDistance => _bubbleBumpDistance;
         public float BubbleBumpDuration
         {

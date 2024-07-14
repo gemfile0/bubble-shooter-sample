@@ -163,7 +163,7 @@ namespace BubbleShooterSample.LevelPlayer
             float bubbleSnappingDuration = _bubbleShooterData.BubbleSnappingDuration;
             float bubbleBumpDuration = _bubbleShooterData.BubbleBumpDuration;
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, bubbleSnappingDuration));
+            sequence.Append(bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, bubbleSnappingDuration).SetEase(_bubbleShooterData.BubbleSnappingEase));
             sequence.InsertCallback(bubbleBumpDuration, () => _bubblePresenter.AddBubbleTile(closestTileInfo.Index, bubbleTile));
         }
 
