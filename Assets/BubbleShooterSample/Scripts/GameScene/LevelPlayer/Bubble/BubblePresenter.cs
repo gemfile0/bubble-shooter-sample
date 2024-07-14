@@ -4,7 +4,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace BubbleShooterSample.LevelPlayer
@@ -39,12 +38,16 @@ namespace BubbleShooterSample.LevelPlayer
         private Queue<Vector2Int> _sameBubbleTileQueue;
         private List<(Vector2Int, int)> _sameBubbleTileIndexList;
 
-        private List<TaskCompletionSource<bool>> _tcsList;
-
         // 뿌리로부터 연결된 버블을 찾기 위한 용도
         private HashSet<Vector2Int> _connectedIndexSet;
         private Queue<Vector2Int> _connectedTileQueue;
         private List<(Vector2Int, int)> _unconnectedTileIndexList;
+
+        private int _lootAnimationIndex;
+        private HashSet<int> _lootAnimationSet;
+
+        private int _dropAnimationIndex;
+        private HashSet<int> _dropAnimationSet;
 
         private void Awake()
         {
@@ -52,11 +55,15 @@ namespace BubbleShooterSample.LevelPlayer
             _visitedIndexSet = new();
             _sameBubbleTileQueue = new();
 
-            _tcsList = new();
-
             _connectedIndexSet = new();
             _connectedTileQueue = new();
             _unconnectedTileIndexList = new();
+
+            _lootAnimationIndex = 0;
+            _lootAnimationSet = new();
+
+            _dropAnimationIndex = 0;
+            _dropAnimationSet = new();
         }
 
         internal void UpdateFlowTileListDict(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> colorTileListDict)
@@ -89,7 +96,12 @@ namespace BubbleShooterSample.LevelPlayer
                 int tileID = tileModel.TileID;
                 Color bubbleColor = tileModel.BubbleColor;
                 int attackPoint = tileModel.AttackPoint;
-                BubbleTile bubbleTile = _bubbleView.GetOrCreateBubbleTile(tileID, bubbleColor, attackPoint > 0, firstPathNode.Value.NextTilePosition);
+                BubbleTile bubbleTile = _bubbleView.GetOrCreateBubbleTile(
+                    tileID,
+                    bubbleColor,
+                    hasAttackPoint: attackPoint > 0,
+                    tilePosition: firstPathNode.Value.NextTilePosition
+                );
 
                 Sequence sequence = DOTween.Sequence();
                 float moveDuration = _bubbleData.MoveBubbleDuration;
@@ -176,7 +188,6 @@ namespace BubbleShooterSample.LevelPlayer
                     _unconnectedTileIndexList.Add((tileIndex, tileID));
                 }
 
-                //Sequence sequence = DOTween.Sequence();
                 float fadeDuration = _bubbleData.FadeBubbleDuration;
                 Vector2 droppingForceRange = _bubbleData.DroppingForceRange;
                 float droppingGravityScale = _bubbleData.DroppingGravityScale;
@@ -184,22 +195,33 @@ namespace BubbleShooterSample.LevelPlayer
                 {
                     _bubbleModel.RemoveBubbleTile(tileIndex);
                     BubbleTile removingTile = _bubbleView.GetBubbleTile(tileID);
+                    removingTile.DOKill();
+
+                    int dropAnimationIndex = AddDropAnimationIndex();
+                    _dropAnimationSet.Add(dropAnimationIndex);
 
                     float droppingForce = UnityEngine.Random.Range(droppingForceRange.x, droppingForceRange.y);
-                    removingTile.Drop(droppingForce, droppingGravityScale);
-                    //removingTile.DOKill();
-                    foreach (SpriteRenderer spriteRenderer in removingTile.SpriteRendererList)
-                    {
-                        //sequence.Join(spriteRenderer.DOFade(0f, fadeDuration));
-                    }
+                    removingTile.Drop(
+                        droppingForce,
+                        droppingGravityScale,
+                        () =>
+                        {
+                            foreach (SpriteRenderer spriteRenderer in removingTile.SpriteRendererList)
+                            {
+                                spriteRenderer.DOFade(0f, fadeDuration);
+                            }
+                            _dropAnimationSet.Remove(dropAnimationIndex);
+                        }
+                    );
                 }
-                yield return new WaitForSeconds(3f);
-                //yield return sequence.WaitForCompletion();
 
-                //foreach ((Vector2Int tileIndex, int tileID) in _unconnectedTileIndexList)
-                //{
-                //    _bubbleView.RemoveBubbleTile(tileID);
-                //}
+                yield return new WaitWhile(() => _dropAnimationSet.Count > 0);
+
+                yield return new WaitForSeconds(fadeDuration);
+                foreach ((Vector2Int tileIndex, int tileID) in _unconnectedTileIndexList)
+                {
+                    _bubbleView.RemoveBubbleTile(tileID);
+                }
             }
 
             _unconnectedTileIndexList.Clear();
@@ -240,10 +262,7 @@ namespace BubbleShooterSample.LevelPlayer
 
             yield return DropUnconnectedBubbles();
 
-            foreach (var tcs in _tcsList)
-            {
-                yield return new WaitUntil(() => tcs.Task.IsCompleted);
-            }
+            yield return new WaitWhile(() => _lootAnimationSet.Count > 0);
 
             _bubbleModel.FeedBubbleTileList();
             yield return FeedBubbles();
@@ -278,8 +297,6 @@ namespace BubbleShooterSample.LevelPlayer
             // 같은 색상의 버블이 3개 이상인 경우 제거
             if (_sameBubbleTileIndexList.Count >= 3)
             {
-                _tcsList.Clear();
-
                 float fadeDuration = _bubbleData.FadeBubbleDuration;
                 Sequence sequence = DOTween.Sequence();
                 foreach ((Vector2Int bubbleTileIndex, int tileID) in _sameBubbleTileIndexList)
@@ -295,14 +312,14 @@ namespace BubbleShooterSample.LevelPlayer
                     int attackPoint = removedTileModel.AttackPoint;
                     if (attackPoint > 0)
                     {
-                        var tcs = new TaskCompletionSource<bool>();
-                        _tcsList.Add(tcs);
+                        int lootAnimationIndex = AddLootAnimationIndex();
+                        _lootAnimationSet.Add(lootAnimationIndex);
 
                         var lootAnimationInfo = new LootAnimationInfo(
                             attackPoint,
                             removingTile.CachedTransform.position,
                             removingTile.CachedTransform.rotation,
-                            onComplete: () => tcs.SetResult(true)
+                            onComplete: () => _lootAnimationSet.Remove(lootAnimationIndex)
                         );
                         requestLootAnimation(LootAnimationType.AttackPoint, lootAnimationInfo);
                     }
@@ -322,6 +339,20 @@ namespace BubbleShooterSample.LevelPlayer
         {
             _sameBubbleTileQueue.Enqueue(tileIndex);
             _visitedIndexSet.Add(tileIndex);
+        }
+
+        private int AddLootAnimationIndex()
+        {
+            int result = _lootAnimationIndex;
+            _lootAnimationIndex += 1;
+            return result;
+        }
+
+        private int AddDropAnimationIndex()
+        {
+            int result = _dropAnimationIndex;
+            _dropAnimationIndex += 1;
+            return result;
         }
     }
 }

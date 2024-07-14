@@ -38,14 +38,17 @@ namespace BubbleShooterSample.LevelPlayer
 
         public Color BubbleColor { get; private set; }
 
-        private Vector3 _velocity;
-        private float _gravityScale;
-        private Coroutine _shootCoroutine;
-        private Coroutine _dropCoroutine;
+        private SpriteRenderer[] _spriteRendererList;
         private float _radius;
         private List<Transform> _hitBubbleTransformList;
-        private SpriteRenderer[] _spriteRendererList;
         private BubbleTileState _state;
+
+        private Vector3 _velocity;
+        private float _gravityScale;
+
+        private Coroutine _shootCoroutine;
+        private Coroutine _dropCoroutine;
+        private Action _onDropComplete;
 
         public void Init(Color bubbleColor, bool hasAttackPoint)
         {
@@ -59,6 +62,8 @@ namespace BubbleShooterSample.LevelPlayer
 
             _attackPointView.gameObject.SetActive(hasAttackPoint);
             _attackPointView.Init();
+
+            SetState(BubbleTileState.Hanging);
         }
 
         private void SetState(BubbleTileState state)
@@ -91,16 +96,17 @@ namespace BubbleShooterSample.LevelPlayer
             _shootCoroutine = StartCoroutine(ShootCoroutine());
         }
 
-        public void Drop(float force, float gravityScale)
+        public void Drop(float force, float gravityScale, Action onComplete)
         {
             SetState(BubbleTileState.Falling);
 
             Vector2 randomDirection = UnityEngine.Random.insideUnitCircle;
             _velocity = randomDirection * force;
             _gravityScale = gravityScale;
+            _onDropComplete = onComplete;
 
             StopDropCoroutine();
-            _dropCoroutine = StartCoroutine(DropCoroutine(gravityScale));
+            _dropCoroutine = StartCoroutine(DropCoroutine());
         }
 
         private void StopShootCoroutine()
@@ -129,11 +135,11 @@ namespace BubbleShooterSample.LevelPlayer
             }
         }
 
-        private IEnumerator DropCoroutine(float gravityScale)
+        private IEnumerator DropCoroutine()
         {
             while (true)
             {
-                _velocity += Vector3.down * gravityScale * Time.fixedDeltaTime;
+                _velocity += Vector3.down * _gravityScale * Time.fixedDeltaTime;
                 yield return MoveCoroutine();
             }
         }
@@ -149,7 +155,7 @@ namespace BubbleShooterSample.LevelPlayer
                 origin: raycastStartPosition,
                 direction: _velocity,
                 distance: _velocity.magnitude * Time.fixedDeltaTime * 2 /* 거리가 짧아서 약간 더 길게 세팅 */,
-                layerMask: LayerMaskValue.HitLayerWall
+                layerMask: LayerMaskValue.HitLayer_Wall
             );
 
             if (wallHit.collider != null)
@@ -166,7 +172,7 @@ namespace BubbleShooterSample.LevelPlayer
             int hitLayer = collision.gameObject.layer;
             // A-2. 버블과의 충돌 감지
             if (_state == BubbleTileState.Shooting
-                && hitLayer == LayerMaskValue.NameLayerBubble)
+                && hitLayer == LayerMaskValue.NameLayer_Bubble)
             {
                 StopShootCoroutine();
 
@@ -177,7 +183,7 @@ namespace BubbleShooterSample.LevelPlayer
                 Vector2 hitPosition = collision.contacts[0].point;
 
                 _hitBubbleTransformList.Clear();
-                Collider2D[] colliders = Physics2D.OverlapCircleAll(hitPosition, _radius, LayerMaskValue.HitLayerBubble);
+                Collider2D[] colliders = Physics2D.OverlapCircleAll(hitPosition, _radius, LayerMaskValue.HitLayer_Bubble);
                 foreach (var collider in colliders)
                 {
                     if (collider != _collider2D)
@@ -187,6 +193,11 @@ namespace BubbleShooterSample.LevelPlayer
                 }
 
                 onHit?.Invoke(_hitBubbleTransformList);
+            }
+            else if (_state == BubbleTileState.Falling
+                     && hitLayer == LayerMaskValue.NameLayer_ShooterGround)
+            {
+                _onDropComplete?.Invoke();
             }
         }
 

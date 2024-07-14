@@ -231,7 +231,7 @@ namespace BubbleShooterSample.LevelPlayer
                     origin: currentPosition,
                     direction: currentDirection,
                     distance: remainingDistance,
-                    layerMask: LayerMaskValue.HitLayerAll
+                    layerMask: LayerMaskValue.HitLayer_WallAndBubble
                 );
 
                 if (hit.collider != null)
@@ -242,15 +242,15 @@ namespace BubbleShooterSample.LevelPlayer
                     remainingDistance -= distanceToHit;
                     currentPosition = hitPosition;
 
-                    // Bubble 콜라이더에 부딪힌 경우, 렌더링 멈춤
+                    // C-1. Bubble 콜라이더에 부딪힌 경우, 렌더링 멈춤
                     int hitLayer = hit.collider.gameObject.layer;
-                    if (hitLayer == LayerMaskValue.NameLayerBubble)
+                    if (hitLayer == LayerMaskValue.NameLayer_Bubble)
                     {
                         break;
                     }
 
-                    // Wall 콜라이더에 부딪힌 경우, 반사 효과 적용
-                    if (hitLayer == LayerMaskValue.NameLayerWall)
+                    // C-2. Wall 콜라이더에 부딪힌 경우, 반사 효과 적용
+                    if (hitLayer == LayerMaskValue.NameLayer_Wall)
                     {
                         currentDirection = new Vector2(-1 * currentDirection.x, currentDirection.y);
                         currentPosition += currentDirection * ColliderOffset;

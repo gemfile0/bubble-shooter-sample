@@ -5,11 +5,12 @@ namespace BubbleShooterSample
     public class LayerMaskValue
     {
 
-        public static readonly int NameLayerBubble = LayerMask.NameToLayer("Bubble");
-        public static readonly int NameLayerWall = LayerMask.NameToLayer("Wall");
+        public static readonly int NameLayer_Bubble = LayerMask.NameToLayer("Bubble");
+        public static readonly int NameLayer_Wall = LayerMask.NameToLayer("Wall");
+        public static readonly int NameLayer_ShooterGround = LayerMask.NameToLayer("ShooterGround");
 
-        public static readonly int HitLayerAll = LayerMask.GetMask("Wall", "Bubble");
-        public static readonly int HitLayerBubble = LayerMask.GetMask("Bubble");
-        public static readonly int HitLayerWall = LayerMask.GetMask("Wall");
+        public static readonly int HitLayer_WallAndBubble = LayerMask.GetMask("Wall", "Bubble");
+        public static readonly int HitLayer_Bubble = LayerMask.GetMask("Bubble");
+        public static readonly int HitLayer_Wall = LayerMask.GetMask("Wall");
     }
 }
