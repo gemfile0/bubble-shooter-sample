@@ -7,7 +7,8 @@ namespace BubbleShooterSample
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private float _circleRadius = .5f;
-        [SerializeField] private float _speed = 1f;
+        [SerializeField] private Vector2 _speedRange = new Vector2(0.5f, 1f);
+        [SerializeField] private Vector2 _delayRange = new Vector2(0f, 0.5f);
 
         public SpriteRenderer SpriteRenderer => _spriteRenderer;
 
@@ -29,18 +30,20 @@ namespace BubbleShooterSample
             while (true)
             {
                 SetRandomTargetPosition();
+                float randomSpeed = Random.Range(_speedRange.x, _speedRange.y);
 
                 while (Vector3.Distance(_spriteTransform.localPosition, _targetPosition) > 0.1f)
                 {
                     _spriteTransform.localPosition = Vector3.MoveTowards(
                         current: _spriteTransform.localPosition,
                         target: _targetPosition,
-                        maxDistanceDelta: _speed * Time.deltaTime
+                        maxDistanceDelta: randomSpeed * Time.deltaTime
                     );
                     yield return null;
                 }
 
-                yield return new WaitForSeconds(1f);
+                float randomDelay = Random.Range(_delayRange.x, _delayRange.y);
+                yield return new WaitForSeconds(randomDelay);
             }
         }
 

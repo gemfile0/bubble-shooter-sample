@@ -195,7 +195,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.225, y: 0.225, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8014462091212619317}
@@ -214,8 +214,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 4230234343866259507}
-  _circleRadius: 0.5
-  _speed: 0.9
+  _circleRadius: 0.4
+  _speedRange: {x: 0.25, y: 0.5}
+  _delayRange: {x: 0, y: 0.5}
 --- !u!1 &8759905119954222939
 GameObject:
   m_ObjectHideFlags: 0
