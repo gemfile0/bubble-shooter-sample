@@ -17,16 +17,15 @@ namespace BubbleShooterSample.LevelPlayer
     {
         [SerializeField] private BubblePresenter _bubblePresenter;
 
+        [Header("Data")]
         [SerializeField] private BubbleShooterData _bubbleShooterData;
+
+        [Header("Model")]
+        [SerializeField] private BubbleShooterModel _bubbleShooterModel;
 
         [Header("View")]
         [SerializeField] private Transform _shooterTransform;
-        [SerializeField] private float _shooterPositionY = -5f;
-
-        [Header("Guide Line")]
         [SerializeField] private LineRenderer _guideLineRenderer;
-
-        [Header("Guide Circle")]
         [SerializeField] private Transform _guideCircleTransform;
 
         public event Func<Vector2, ClosestTileInfo> requestGettingClosestTileInfo;
@@ -34,29 +33,25 @@ namespace BubbleShooterSample.LevelPlayer
         private const int MaxReflections = 2;
         private const float ColliderOffset = 0.01f;
 
-        private BubbleTile _bubbleTile;
-        private Vector3 _shooterTopPosition;
-        private List<Vector3> _linePoints;
-        private Vector3 _shootDirection;
-        private IEnumerable<Transform> _hitBubbleTransforms;
-
         private Vector3 _totalGridSize;
         private float _horizontalSpacing;
-        private BubbleShooterState _currentState;
+        private List<Vector3> _linePoints;
         private GameObject _guideCircleObject;
 
-        private void Awake()
-        {
-            _linePoints = new();
-            SetState(BubbleShooterState.Wait);
-            _guideCircleObject = _guideCircleTransform.gameObject;
-        }
+        private BubbleShooterState _currentState;
+
+        private Vector3 _shooterTopPosition;
+        private BubbleTile _bubbleTile;
+        private IEnumerable<Transform> _hitBubbleTransforms;
 
         public void Init(Vector3 totalGridSize, float horizontalSpacing)
         {
             _totalGridSize = totalGridSize;
             _horizontalSpacing = horizontalSpacing;
+            _linePoints = new();
+            _guideCircleObject = _guideCircleTransform.gameObject;
 
+            SetState(BubbleShooterState.Wait);
             SetupShooter(null);
         }
 
@@ -77,7 +72,7 @@ namespace BubbleShooterSample.LevelPlayer
             Vector2 gridSizeHalf = _totalGridSize / 2f;
             float horizontalSpacingHalf = _horizontalSpacing / 2f;
 
-            _shooterTransform.position = new Vector2(gridSizeHalf.x - horizontalSpacingHalf, _shooterPositionY);
+            _shooterTransform.position = new Vector2(gridSizeHalf.x - horizontalSpacingHalf, _bubbleShooterData.BubbleShooterPositionY);
 
             // A-1. 5시 방향에서 버블 생성
             float radius = 1.9f / 2;
@@ -182,8 +177,8 @@ namespace BubbleShooterSample.LevelPlayer
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePosition.z = 0;
 
-            _shootDirection = (mousePosition - _shooterTopPosition).normalized;
-            float guidelineAngle = Vector2.Angle(Vector2.right, _shootDirection);
+            Vector3 shootDirection = (mousePosition - _shooterTopPosition).normalized;
+            float guidelineAngle = Vector2.Angle(Vector2.right, shootDirection);
             Vector2 guidelineAngleRange = _bubbleShooterData.GuidelineAngleRange;
             if (guidelineAngle < guidelineAngleRange.x || guidelineAngle > guidelineAngleRange.y)
             {
@@ -197,7 +192,7 @@ namespace BubbleShooterSample.LevelPlayer
             {
                 _guideCircleObject.SetActive(false);
 
-                DrawGuideLine(_shooterTopPosition, _shootDirection);
+                DrawGuideLine(_shooterTopPosition, shootDirection);
             }
             // B-4. 버블 쏘기
             else if (Input.GetMouseButtonUp(0))
@@ -205,7 +200,7 @@ namespace BubbleShooterSample.LevelPlayer
                 _guideCircleObject.SetActive(false);
 
                 _guideLineRenderer.positionCount = 0;
-                ShootBubble(_shootDirection);
+                ShootBubble(shootDirection);
                 SetState(BubbleShooterState.Shooting);
             }
             else

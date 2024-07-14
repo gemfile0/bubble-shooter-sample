@@ -6,6 +6,8 @@ namespace BubbleShooterSample
     [CreateAssetMenu(menuName = "Bubble Shooter Sample/Bubble Shooter Data")]
     public class BubbleShooterData : ScriptableObject
     {
+        [SerializeField] private float _bubbleShooterPositionY = -5f;
+
         [Header("Guideline")]
         [SerializeField] private Vector2 _guidelineAngleRange = new Vector2(30, 150);
         [SerializeField] private float _guidelineMaxDistance = 5f;
@@ -16,6 +18,8 @@ namespace BubbleShooterSample
         [SerializeField] private float _bubbleBumpDuration = .25f * .5f;
         [SerializeField] private Ease _bubbleSnappingEase = Ease.OutQuad;
         [SerializeField] private float _bubbleBumpDistance = 0.1f;
+
+        public float BubbleShooterPositionY => _bubbleShooterPositionY;
 
         public Vector2 GuidelineAngleRange => _guidelineAngleRange;
         public float GuidelineMaxDistance => _guidelineMaxDistance;

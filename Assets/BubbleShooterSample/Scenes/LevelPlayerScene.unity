@@ -2337,6 +2337,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1867635651}
   - component: {fileID: 1867635652}
+  - component: {fileID: 1867635653}
   m_Layer: 0
   m_Name: BubbleShooter
   m_TagString: Untagged
@@ -2379,6 +2380,18 @@ MonoBehaviour:
   _shooterPositionY: -5
   _guideLineRenderer: {fileID: 476535340}
   _guideCircleTransform: {fileID: 1133916172}
+--- !u!114 &1867635653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1867635650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b2bf525bfb37af478e0639fea21b8bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1913760724
 GameObject:
   m_ObjectHideFlags: 0
@@ -2474,7 +2487,7 @@ GameObject:
   - component: {fileID: 2013237498}
   - component: {fileID: 2013237499}
   m_Layer: 0
-  m_Name: Shooter
+  m_Name: BubbleShooterView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

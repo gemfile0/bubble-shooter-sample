@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BubbleShooterSample
+namespace BubbleShooterSample.LevelEditor
 {
     public class GateKeeperEditorModel : MonoBehaviour
     {
