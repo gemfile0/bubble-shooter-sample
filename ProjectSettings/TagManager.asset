@@ -41,3 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Bubble
+    uniqueID: 3561702141
+    locked: 0
+  - name: Loot
+    uniqueID: 754280505
+    locked: 0

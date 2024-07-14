@@ -96,5 +96,10 @@ namespace BubbleShooterSample
         {
             return _gridModel.GetNeighborIndexList(tileIndex, visitedIndexSet);
         }
+
+        internal Vector3 GetGridTilePosition(Vector2Int tileIndex)
+        {
+            return _gridView.GetGridTile(tileIndex).Position;
+        }
     }
 }

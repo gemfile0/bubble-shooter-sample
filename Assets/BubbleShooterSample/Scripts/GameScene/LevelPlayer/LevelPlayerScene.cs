@@ -9,6 +9,8 @@ namespace BubbleShooterSample.LevelPlayer
         [SerializeField] private FlowPresenter _flowPresenter;
         [SerializeField] private BubblePresenter _bubblePresenter;
         [SerializeField] private BubbleShooter _bubbleShooter;
+        [SerializeField] private LootAnimationController _lootAnimationController;
+        [SerializeField] private GateKeeperPresenter _gateKeeperPresenter;
 
         [Header("Views")]
         [SerializeField] private WallView _wallView;
@@ -33,6 +35,8 @@ namespace BubbleShooterSample.LevelPlayer
             _bubblePresenter.requestGettingNeighborIndexList += _gridPresenter.GetNeighborIndexList;
 
             _bubbleShooter.requestGettingClosestTileInfo += _gridPresenter.GetClosestTileInfo;
+
+            _gateKeeperPresenter.requestGridTilePosition += _gridPresenter.GetGridTilePosition;
         }
 
         private void OnDisable()
@@ -46,10 +50,14 @@ namespace BubbleShooterSample.LevelPlayer
             _bubblePresenter.requestGettingNeighborIndexList -= _gridPresenter.GetNeighborIndexList;
 
             _bubbleShooter.requestGettingClosestTileInfo -= _gridPresenter.GetClosestTileInfo;
+
+            _gateKeeperPresenter.requestGridTilePosition -= _gridPresenter.GetGridTilePosition;
         }
 
         protected override void Start()
         {
+            _lootAnimationController.AddLootAnimationEndPoint(LootAnimationType.AttackPoint, _gateKeeperPresenter);
+
             base.Start();
 
             // 카메라 위치가 설정된 이후에 호출되어야 하는 로직들
