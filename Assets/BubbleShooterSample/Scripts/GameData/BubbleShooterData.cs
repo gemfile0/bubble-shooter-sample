@@ -13,6 +13,7 @@ namespace BubbleShooterSample
         [Header("Bubble")]
         [SerializeField] private float _bubbleSpeed = 10f;
         [SerializeField] private float _bubbleSnappingDuration = .25f;
+        [SerializeField] private float _bubbleBumpDuration = .25f * .5f;
         [SerializeField] private Ease _bubbleSnappingEase = Ease.OutQuad;
         [SerializeField] private float _bubbleBumpDistance = 0.1f;
 
@@ -23,17 +24,6 @@ namespace BubbleShooterSample
         public float BubbleSnappingDuration => _bubbleSnappingDuration;
         public Ease BubbleSnappingEase => _bubbleSnappingEase;
         public float BubbleBumpDistance => _bubbleBumpDistance;
-        public float BubbleBumpDuration
-        {
-            get
-            {
-                if (_bubbleBumpDuration == 0f)
-                {
-                    _bubbleBumpDuration = _bubbleSnappingDuration * 0.5f;
-                }
-                return _bubbleBumpDuration;
-            }
-        }
-        private float _bubbleBumpDuration;
+        public float BubbleBumpDuration => _bubbleBumpDuration;
     }
 }

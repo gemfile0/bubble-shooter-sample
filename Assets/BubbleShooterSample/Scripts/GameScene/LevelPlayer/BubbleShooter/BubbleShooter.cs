@@ -100,9 +100,12 @@ namespace BubbleShooterSample.LevelPlayer
 
             float snappingDuration = _bubbleShooterData.BubbleSnappingDuration;
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(_bubbleTile.CachedTransform.DOPath(path, snappingDuration, PathType.CatmullRom))
-                    .Join(_bubbleTile.DOFade(1f, snappingDuration))
-                    .OnComplete(OnSetupShooterComplete);
+            sequence.Append(_bubbleTile.CachedTransform.DOPath(path, snappingDuration, PathType.CatmullRom));
+            foreach (SpriteRenderer spriteRenderer in _bubbleTile.SpriteRendererList)
+            {
+                sequence.Join(spriteRenderer.DOFade(1f, snappingDuration));
+            }
+            sequence.OnComplete(OnSetupShooterComplete);
         }
 
         private void SetStateAsReadyToShoot()

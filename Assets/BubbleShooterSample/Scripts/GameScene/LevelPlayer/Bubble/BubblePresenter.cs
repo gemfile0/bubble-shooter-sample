@@ -118,7 +118,10 @@ namespace BubbleShooterSample.LevelPlayer
                     // A-3. 이동을 시작할 때 FadeIn 연출
                     if (bubbleTile.IsAlphaValue(0f))
                     {
-                        sequence.Join(bubbleTile.DOFade(1f, fadeDuration));
+                        foreach (SpriteRenderer spriteRenderer in bubbleTile.SpriteRendererList)
+                        {
+                            sequence.Join(spriteRenderer.DOFade(1f, fadeDuration));
+                        }
                     }
                 }
                 tileModel.ConsumePathNodeList();
@@ -180,7 +183,10 @@ namespace BubbleShooterSample.LevelPlayer
                     _bubbleModel.RemoveBubbleTile(tileIndex);
                     BubbleTile removingTile = _bubbleView.GetBubbleTile(tileID);
                     removingTile.DOKill();
-                    sequence.Join(removingTile.DOFade(0f, fadeDuration));
+                    foreach (SpriteRenderer spriteRenderer in removingTile.SpriteRendererList)
+                    {
+                        sequence.Join(spriteRenderer.DOFade(0f, fadeDuration));
+                    }
                 }
                 yield return sequence.WaitForCompletion();
 
@@ -275,7 +281,10 @@ namespace BubbleShooterSample.LevelPlayer
                     IBubbleTileModel removedTileModel = _bubbleModel.RemoveBubbleTile(bubbleTileIndex);
                     BubbleTile removingTile = _bubbleView.GetBubbleTile(tileID);
                     removingTile.DOKill();
-                    sequence.Join(removingTile.DOFade(0f, fadeDuration));
+                    foreach (SpriteRenderer spriteRenderer in removingTile.SpriteRendererList)
+                    {
+                        sequence.Join(spriteRenderer.DOFade(0f, fadeDuration));
+                    }
 
                     int attackPoint = removedTileModel.AttackPoint;
                     if (attackPoint > 0)

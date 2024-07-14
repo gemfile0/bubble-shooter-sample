@@ -16,4 +16,5 @@ MonoBehaviour:
   _guidelineMaxDistance: 10
   _bubbleSpeed: 12.5
   _bubbleSnappingDuration: 0.25
+  _bubbleSnappingEase: 15
   _bubbleBumpDistance: 0.1

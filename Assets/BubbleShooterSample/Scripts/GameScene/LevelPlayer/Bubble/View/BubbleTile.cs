@@ -1,4 +1,3 @@
-using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,6 +26,8 @@ namespace BubbleShooterSample.LevelPlayer
             }
         }
         private Transform _cachedTransform;
+
+        public IEnumerable<SpriteRenderer> SpriteRendererList => _spriteRendererList;
 
         public Color BubbleColor { get; private set; }
 
@@ -133,16 +134,6 @@ namespace BubbleShooterSample.LevelPlayer
 
                 onHit?.Invoke(_hitBubbleTransformList);
             }
-        }
-
-        internal Tween DOFade(float value, float duration)
-        {
-            Sequence sequence = DOTween.Sequence();
-            foreach (SpriteRenderer spriteRenderer in _spriteRendererList)
-            {
-                sequence.Join(spriteRenderer.DOFade(value, duration));
-            }
-            return sequence;
         }
 
         internal bool IsAlphaValue(float v)

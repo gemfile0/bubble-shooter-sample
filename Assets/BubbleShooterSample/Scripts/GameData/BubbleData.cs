@@ -17,21 +17,11 @@ namespace BubbleShooterSample.GameData
         };
         [SerializeField] private Ease _feedBubbleSequenceEase = Ease.InOutSine;
         [SerializeField] private float _moveBubbleDuration = 0.25f;
+        [SerializeField] private float _fadeBubbleDuration = 0.25f * .5f;
 
         public Ease FeedBubbleSequenceEase => _feedBubbleSequenceEase;
         public float MoveBubbleDuration => _moveBubbleDuration;
-        public float FadeBubbleDuration
-        {
-            get
-            {
-                if (_fadeBubbleDuration == 0f)
-                {
-                    _fadeBubbleDuration *= 0.5f;
-                }
-                return _fadeBubbleDuration;
-            }
-        }
-        private float _fadeBubbleDuration;
+        public float FadeBubbleDuration => _fadeBubbleDuration;
 
         public Color GetRandomBubbleTileColor()
         {

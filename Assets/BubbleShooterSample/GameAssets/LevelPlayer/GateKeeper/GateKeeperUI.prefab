@@ -302,7 +302,7 @@ GameObject:
   - component: {fileID: 1969613921438912300}
   - component: {fileID: 5890831400812776277}
   m_Layer: 0
-  m_Name: Circle
+  m_Name: KnobCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -528,7 +528,7 @@ GameObject:
   - component: {fileID: 8527913818495086685}
   - component: {fileID: 3335010389188165808}
   m_Layer: 0
-  m_Name: CircleBackground
+  m_Name: KnobCircleBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
