@@ -190,7 +190,7 @@ namespace BubbleShooterSample.System
 
         private string GetSaveLevelDataPath()
         {
-            // e.g. {Assets/BubbleShooterSample/GameDatas}/{LevelData_1.asset}
+            // e.g. {Assets/BubbleShooterSample/GameDatas}/LevelData/{LevelData_1.asset}
             return $"{_levelFileData.GetLevelDataPath()}/{GetLevelDataFileName()}";
         }
 

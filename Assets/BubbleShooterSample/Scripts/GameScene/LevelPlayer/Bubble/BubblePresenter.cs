@@ -1,3 +1,4 @@
+using BubbleShooterSample.GameData;
 using DG.Tweening;
 using System;
 using System.Collections;
@@ -9,17 +10,9 @@ namespace BubbleShooterSample.LevelPlayer
 {
     public class BubblePresenter : MonoBehaviour
     {
+        [SerializeField] private BubbleData _bubbleData;
         [SerializeField] private BubbleModel _bubbleModel;
         [SerializeField] private BubbleView _bubbleView;
-        [SerializeField] private Ease _sequenceEase = Ease.OutSine;
-        [SerializeField]
-        private List<Color> _bubbleTileColorList = new()
-        {
-            Color.yellow,
-            Color.red,
-            Color.blue,
-            new Color(0.8f, 0.8f, 0.8f) // lightening color (밝은 회색)
-        };
 
         public event Action<IReadOnlyDictionary<Vector2Int, IBubbleTileModel>> onBubbleTileDictUpdated
         {
@@ -93,8 +86,8 @@ namespace BubbleShooterSample.LevelPlayer
                 BubbleTile bubbleTile = _bubbleView.GetOrCreateBubbleTile(tileID, bubbleColor, attackPoint > 0, firstPathNode.Value.NextTilePosition);
 
                 Sequence sequence = DOTween.Sequence();
-                float moveDuration = _bubbleView.MoveDuration;
-                float fadeDuration = moveDuration * .5f;
+                float moveDuration = _bubbleData.MoveBubbleDuration;
+                float fadeDuration = _bubbleData.FadeBubbleDuration;
                 //Debug.Log($"FeedBubbles 1 : {tileID}");
                 foreach (BubbleTilePathNode node in tileModel.PathNodeQueue)
                 {
@@ -125,7 +118,7 @@ namespace BubbleShooterSample.LevelPlayer
                 tileModel.ConsumePathNodeList();
                 totalSequence.Insert(0f, sequence);
             }
-            totalSequence.SetEase(_sequenceEase);
+            totalSequence.SetEase(_bubbleData.FeedBubbleSequenceEase);
             yield return totalSequence.WaitForCompletion();
         }
 
@@ -162,8 +155,6 @@ namespace BubbleShooterSample.LevelPlayer
             // 연결되지 않은 버블 제거
             if (_connectedIndexSet.Count != _bubbleModel.BubbleTileDict.Count)
             {
-                float fadeDuration = _bubbleView.MoveDuration * .5f;
-
                 foreach (IBubbleTileModel tileModel in _bubbleModel.BubbleTileDict.Values)
                 {
                     Vector2Int tileIndex = tileModel.TileIndex;
@@ -177,6 +168,7 @@ namespace BubbleShooterSample.LevelPlayer
                 }
 
                 Sequence sequence = DOTween.Sequence();
+                float fadeDuration = _bubbleData.FadeBubbleDuration;
                 foreach ((Vector2Int tileIndex, int tileID) in _unconnectedTileIndexList)
                 {
                     _bubbleModel.RemoveBubbleTile(tileIndex);
@@ -207,8 +199,7 @@ namespace BubbleShooterSample.LevelPlayer
 
         public Color GetRandomBubbleTileColor()
         {
-            int randomIndex = UnityEngine.Random.Range(0, _bubbleTileColorList.Count);
-            return _bubbleTileColorList[randomIndex];
+            return _bubbleData.GetRandomBubbleTileColor();
         }
 
         // BubbleShooter 로부터 호출
@@ -267,7 +258,7 @@ namespace BubbleShooterSample.LevelPlayer
             // 같은 색상의 버블이 3개 이상인 경우 제거
             if (_sameBubbleTileIndexList.Count >= 3)
             {
-                float fadeDuration = _bubbleView.MoveDuration * .5f;
+                float fadeDuration = _bubbleData.FadeBubbleDuration;
                 Sequence sequence = DOTween.Sequence();
                 foreach ((Vector2Int bubbleTileIndex, int tileID) in _sameBubbleTileIndexList)
                 {

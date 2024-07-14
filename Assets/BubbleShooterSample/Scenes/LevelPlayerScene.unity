@@ -458,7 +458,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bubbleTilePrefab: {fileID: 3634310029537945383, guid: e85c495495b3e1d4a8a3585a9b300ae8, type: 3}
-  _moveDuration: 0.25
 --- !u!210 &229802478
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -732,14 +731,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b9dd147a4dddc49bf8353210fc490d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _bubbleData: {fileID: 11400000, guid: ce619b11e5d850d418d93564979d3515, type: 2}
   _bubbleModel: {fileID: 287588253}
   _bubbleView: {fileID: 229802477}
-  _sequenceEase: 4
-  _bubbleTileColorList:
-  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 0, g: 0, b: 1, a: 1}
-  - {r: 0.8, g: 0.8, b: 0.8, a: 1}
 --- !u!1 &307066169
 GameObject:
   m_ObjectHideFlags: 0
@@ -951,7 +945,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.25
+    widthMultiplier: 0.125
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -1959,7 +1953,7 @@ MonoBehaviour:
   _gateKeeperPresenter: {fileID: 1362961785}
   _wallView: {fileID: 1776097546}
   _tweenCapacity: 1000
-  _sequenceCapacity: 100
+  _sequenceCapacity: 500
 --- !u!4 &985812686
 Transform:
   m_ObjectHideFlags: 0
@@ -3018,15 +3012,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bubblePresenter: {fileID: 287588254}
+  _bubbleShooterData: {fileID: 11400000, guid: 674e4e4ee18706042b9caa23233861bc, type: 2}
   _shooterTransform: {fileID: 2013237498}
   _shooterPositionY: -5
   _guideLineRenderer: {fileID: 476535340}
-  _maxDistance: 10
-  _angleRange: {x: 25, y: 155}
+  _maxDistance: 5
+  _angleRange: {x: 30, y: 150}
   _guideCircleTransform: {fileID: 1133916172}
-  _bubbleSpeed: 10
-  _snappingDuration: 0.25
-  _bumpDistance: 0.1
 --- !u!1 &1913760724
 GameObject:
   m_ObjectHideFlags: 0

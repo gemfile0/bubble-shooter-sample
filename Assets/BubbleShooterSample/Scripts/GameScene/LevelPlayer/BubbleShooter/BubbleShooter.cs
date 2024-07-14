@@ -17,22 +17,17 @@ namespace BubbleShooterSample.LevelPlayer
     {
         [SerializeField] private BubblePresenter _bubblePresenter;
 
-        [Header("Shooter Transform")]
+        [SerializeField] private BubbleShooterData _bubbleShooterData;
+
+        [Header("View")]
         [SerializeField] private Transform _shooterTransform;
         [SerializeField] private float _shooterPositionY = -5f;
 
         [Header("Guide Line")]
         [SerializeField] private LineRenderer _guideLineRenderer;
-        [SerializeField] private float _maxDistance = 5f;
-        [SerializeField] private Vector2 _angleRange = new Vector2(30, 150);
 
         [Header("Guide Circle")]
         [SerializeField] private Transform _guideCircleTransform;
-
-        [Header("Bubble Settings")]
-        [SerializeField] private float _bubbleSpeed = 10f;
-        [SerializeField] private float _snappingDuration = .25f;
-        [SerializeField] private float _bumpDistance = 0.1f;
 
         public event Func<Vector2, ClosestTileInfo> requestGettingClosestTileInfo;
 
@@ -103,9 +98,10 @@ namespace BubbleShooterSample.LevelPlayer
                 _shooterTopPosition
             };
 
+            float snappingDuration = _bubbleShooterData.BubbleSnappingDuration;
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(_bubbleTile.CachedTransform.DOPath(path, _snappingDuration, PathType.CatmullRom))
-                    .Join(_bubbleTile.DOFade(1f, _snappingDuration))
+            sequence.Append(_bubbleTile.CachedTransform.DOPath(path, snappingDuration, PathType.CatmullRom))
+                    .Join(_bubbleTile.DOFade(1f, snappingDuration))
                     .OnComplete(OnSetupShooterComplete);
         }
 
@@ -145,17 +141,18 @@ namespace BubbleShooterSample.LevelPlayer
         {
             Vector3 hitPosition = bubbleTile.CachedTransform.position;
 
+            float bubbleBumpDistance = _bubbleShooterData.BubbleBumpDistance;
+            float bubbleBumpDuration = _bubbleShooterData.BubbleBumpDuration;
             foreach (Transform bubbleTransform in _hitBubbleTransforms)
             {
                 Vector3 bubblePosition = bubbleTransform.position;
                 Vector3 direction = (bubblePosition - hitPosition).normalized;
-                Vector3 targetPosition = bubblePosition + direction * _bumpDistance;
+                Vector3 targetPosition = bubblePosition + direction * bubbleBumpDistance;
 
-                // DoTween을 사용하여 움찔하는 애니메이션 추가
-                float snappingDurationHalf = _snappingDuration / 2f;
+                // 부딪힌 버블들이 움찔하는 애니메이션 
                 Sequence sequence = DOTween.Sequence();
-                sequence.Append(bubbleTransform.DOMove(targetPosition, snappingDurationHalf))
-                        .Append(bubbleTransform.DOMove(bubblePosition, snappingDurationHalf));
+                sequence.Append(bubbleTransform.DOMove(targetPosition, bubbleBumpDuration))
+                        .Append(bubbleTransform.DOMove(bubblePosition, bubbleBumpDuration));
             }
         }
 
@@ -163,10 +160,11 @@ namespace BubbleShooterSample.LevelPlayer
         {
             ClosestTileInfo closestTileInfo = requestGettingClosestTileInfo.Invoke(bubbleTile.CachedTransform.position);
 
-            float snappingDurationHalf = _snappingDuration / 2f;
+            float bubbleSnappingDuration = _bubbleShooterData.BubbleSnappingDuration;
+            float bubbleBumpDuration = _bubbleShooterData.BubbleBumpDuration;
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, _snappingDuration));
-            sequence.InsertCallback(snappingDurationHalf, () => _bubblePresenter.AddBubbleTile(closestTileInfo.Index, bubbleTile));
+            sequence.Append(bubbleTile.CachedTransform.DOMove(closestTileInfo.Position, bubbleSnappingDuration));
+            sequence.InsertCallback(bubbleBumpDuration, () => _bubblePresenter.AddBubbleTile(closestTileInfo.Index, bubbleTile));
         }
 
         private void Update()
@@ -182,8 +180,9 @@ namespace BubbleShooterSample.LevelPlayer
             mousePosition.z = 0;
 
             _shootDirection = (mousePosition - _shooterTopPosition).normalized;
-            float angle = Vector2.Angle(Vector2.right, _shootDirection);
-            if (angle < _angleRange.x || angle > _angleRange.y)
+            float guidelineAngle = Vector2.Angle(Vector2.right, _shootDirection);
+            Vector2 guidelineAngleRange = _bubbleShooterData.GuidelineAngleRange;
+            if (guidelineAngle < guidelineAngleRange.x || guidelineAngle > guidelineAngleRange.y)
             {
                 _guideLineRenderer.positionCount = 0;
                 _guideCircleObject.SetActive(false);
@@ -222,7 +221,7 @@ namespace BubbleShooterSample.LevelPlayer
             Vector3 currentPosition = startPosition;
             Vector3 currentDirection = direction;
             int reflections = 0;
-            float remainingDistance = _maxDistance;
+            float remainingDistance = _bubbleShooterData.GuidelineMaxDistance;
             while (reflections < MaxReflections)
             {
                 RaycastHit2D hit = Physics2D.Raycast(
@@ -268,9 +267,11 @@ namespace BubbleShooterSample.LevelPlayer
 
         private void ShootBubble(Vector3 direction)
         {
+            float bubbleSpeed = _bubbleShooterData.BubbleSpeed;
+
             _bubbleTile.CachedTransform.SetParent(null);
             _bubbleTile.SetColliderEnabled(true);
-            _bubbleTile.Shoot(direction, _bubbleSpeed);
+            _bubbleTile.Shoot(direction, bubbleSpeed);
         }
     }
 }

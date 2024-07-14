@@ -8,9 +8,6 @@ namespace BubbleShooterSample.LevelPlayer
     public class BubbleView : MonoBehaviour
     {
         [SerializeField] private BubbleTile _bubbleTilePrefab;
-        [SerializeField] private float _moveDuration = 1f;
-
-        public float MoveDuration => _moveDuration;
 
         private Transform _cachedTransform;
 

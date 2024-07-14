@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1940bd795a750e34ab3cde2ab050a383, type: 3}
-  m_Name: LevelFileData
+  m_Script: {fileID: 11500000, guid: e01181462ad227943a0f6eb60548c725, type: 3}
+  m_Name: BubbleShooterData
   m_EditorClassIdentifier: 
-  _levelDataPathBase: Assets/BubbleShooterSample/GameDatas/LevelDatas
-  _levelDataName: LevelData
+  _guidelineAngleRange: {x: 30, y: 150}
+  _guidelineMaxDistance: 5
+  _bubbleSpeed: 12.5
+  _bubbleSnappingDuration: 0.25
+  _bubbleBumpDistance: 0.1
