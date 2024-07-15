@@ -4,7 +4,7 @@
 ## 사용한 Unity 에디터 버전
 Unity 에디터 버전 2022.3.21f1 을 사용했습니다.
 
-## Unity 데이터에서 플레이 가능한 씬
+## Unity 에디터에서 플레이 가능한 씬
 프로젝트를 열면, Unity 에디터 상단 메뉴에 플레이 가능한 씬을 여는 메뉴를 준비해 두었습니다. 각 씬별 특징을 간략히 설명하겠습니다.  
 ![Reference Screenshot](Screenshots/Unity_SzGufMwW52.png)
 
