@@ -39,12 +39,12 @@ namespace BubbleShooterSample
             }
         }
 
-        public Vector3 GetTotalGridSize()
+        public Vector2 GetTotalGridSize()
         {
-            float width = (_columnCount - 1) * HorizontalSpacing + HorizontalSpacing;
-            float height = (_rowCount - 1) * VerticalSpacing + VerticalSpacing;
+            float width = (_columnCount + 1) * HorizontalSpacing; // 짝수 행은 한 개 더 많다
+            float height = _rowCount * VerticalSpacing;
 
-            return new Vector3(width, height, 0);
+            return new Vector2(width, height);
         }
 
         public ClosestTileInfo GetClosestTileInfo(Vector2 position)

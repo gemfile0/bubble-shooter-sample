@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gateKeeperSkinList:
   - {fileID: 21300000, guid: 0092cd80a537fbd4e8ae586a77fb7349, type: 3}
-  - {fileID: 21300000, guid: 2ebb456e92f6a8d4fa6cab14389db8b9, type: 3}
-  - {fileID: 21300000, guid: 84738105a39bde246a08697f869b96e5, type: 3}
+  - {fileID: 21300000, guid: 8fde114c14036e44a896783f904b8dbe, type: 3}
+  - {fileID: 21300000, guid: dbf1f11cc762b954fb8c114d19e12019, type: 3}
   _healthSliderDuration: 0.5
   _healthSliderEase: 6

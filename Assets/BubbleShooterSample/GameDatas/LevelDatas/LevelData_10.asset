@@ -18,4 +18,4 @@ MonoBehaviour:
   - ID: 1
     Data: '{"bubbleCount":23}'
   - ID: 2
-    Data: '{"healthPoint":15,"skinIndex":1}'
+    Data: '{"healthPoint":50,"skinIndex":1}'

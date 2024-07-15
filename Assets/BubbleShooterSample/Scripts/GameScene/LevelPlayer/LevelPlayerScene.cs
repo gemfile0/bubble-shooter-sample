@@ -60,9 +60,9 @@ namespace BubbleShooterSample.LevelPlayer
 
             base.Start();
 
-            // 카메라 위치가 설정된 이후에 호출되어야 하는 로직들
-            _bubbleShooterPresenter.Init(_gridPresenter.GetTotalGridSize(), _gridPresenter.HorizontalSpacing);
-            _wallView.Init();
+            _wallView.Init(_totalGridSize); /* 카메라 위치가 설정된 이후에 호출되어야 함 */
+
+            _bubbleShooterPresenter.Init(_totalGridSize, _gridPresenter.HorizontalSpacing);
             _gateKeeperPresenter.Init(_gridPresenter.GetGridTilePosition(new Vector2Int(5, 1)));
         }
     }

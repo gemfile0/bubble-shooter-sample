@@ -76,10 +76,11 @@ namespace BubbleShooterSample.LevelPlayer
 
         private void UpdateShooterPosition()
         {
-            Vector2 gridSizeHalf = _totalGridSize / 2f;
-            float horizontalSpacingHalf = _horizontalSpacing / 2f;
-
-            _bubbleShooterView.CachedTransform.position = new Vector2(gridSizeHalf.x - horizontalSpacingHalf, _bubbleShooterData.BubbleShooterPositionY);
+            float positionX = _totalGridSize.x * 0.5f - _horizontalSpacing;
+            _bubbleShooterView.CachedTransform.position = new Vector2(
+                positionX,
+                _bubbleShooterData.BubbleShooterPositionY
+            );
         }
 
         internal void SetReadyToShoot()

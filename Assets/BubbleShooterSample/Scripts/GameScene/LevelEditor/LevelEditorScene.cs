@@ -12,7 +12,7 @@ namespace BubbleShooterSample.LevelEditor
         {
             base.Start();
 
-            _bubbleShooterEditorPresenter.Init(_gridPresenter.GetTotalGridSize(), _gridPresenter.HorizontalSpacing);
+            _bubbleShooterEditorPresenter.Init(_totalGridSize, _gridPresenter.HorizontalSpacing);
             _gateKeeperEditorPresenter.Init(_gridPresenter.GetGridTilePosition(new Vector2Int(5, 1)));
         }
     }

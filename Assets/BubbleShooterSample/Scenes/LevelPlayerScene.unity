@@ -2340,6 +2340,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _leftWall: {fileID: 876663752}
   _rightWall: {fileID: 548526437}
+  _wallPositionOffset: 0
 --- !u!1 &1840337597
 GameObject:
   m_ObjectHideFlags: 0
