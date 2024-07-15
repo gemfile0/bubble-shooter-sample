@@ -140,6 +140,9 @@ namespace BubbleShooterSample.LevelPlayer
 
         private const int MaxTurns = 1000;
 
+        private float _attackPointSpawnRate;
+        private int _attackPoint;
+
         private int _currentTurn;
         private List<IBubbleTileModel> _flowBubbleList;
         private List<IBubbleTileModel> _newFlowBubbleList;
@@ -149,8 +152,11 @@ namespace BubbleShooterSample.LevelPlayer
         private IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> _flowTileListDict;
         private Func<Color> _GetRandomBubbleTileColor;
 
-        private void Awake()
+        public void Init(float attackPointSpawnRate, int attackPoint)
         {
+            _attackPointSpawnRate = attackPointSpawnRate;
+            _attackPoint = attackPoint;
+
             _currentTurn = 0;
             _flowBubbleList = new();
             _newFlowBubbleList = new();
@@ -250,7 +256,7 @@ namespace BubbleShooterSample.LevelPlayer
                     Color tileColor = pair.Key;
                     Vector2 tilePosition = headFlowTileNode.Value.TilePosition;
                     Color bubbleColor = _GetRandomBubbleTileColor();
-                    int attackPoint = UnityEngine.Random.Range(0, 3) == 0 ? 5 : 0; // 1/3 확률로 5점 공격 포인트
+                    int attackPoint = UnityEngine.Random.Range(0f, 1f) <= _attackPointSpawnRate ? _attackPoint : 0;
                     BubbleTileModel bubbleTile = new(tileIndex, tilePosition, tileColor, bubbleColor, attackPoint, _currentTurn, headFlowTileNode);
                     _newFlowBubbleList.Add(bubbleTile);
                     _bubbleTileDict.Add(tileIndex, bubbleTile);

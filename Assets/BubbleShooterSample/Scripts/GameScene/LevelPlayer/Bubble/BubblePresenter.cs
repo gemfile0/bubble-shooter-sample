@@ -64,6 +64,8 @@ namespace BubbleShooterSample.LevelPlayer
 
             _dropAnimationIndex = 0;
             _dropAnimationSet = new();
+
+            _bubbleModel.Init(_bubbleData.AttackPointSpawnRate, _bubbleData.AttackPoint);
         }
 
         internal void UpdateFlowTileListDict(IReadOnlyDictionary<Color, LinkedList<IFlowTileModel>> colorTileListDict)
