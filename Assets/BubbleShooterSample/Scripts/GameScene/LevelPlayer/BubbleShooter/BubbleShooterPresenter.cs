@@ -1,3 +1,4 @@
+using BubbleShooterSample.System;
 using DG.Tweening;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,8 @@ namespace BubbleShooterSample.LevelPlayer
         Shooted,
     }
 
-    public class BubbleShooterPresenter : MonoBehaviour
+    public class BubbleShooterPresenter : MonoBehaviour,
+        ILevelRestorable
     {
         [SerializeField] private BubbleShooterData _bubbleShooterData;
         [SerializeField] private BubbleShooterModel _bubbleShooterModel;
@@ -31,6 +33,8 @@ namespace BubbleShooterSample.LevelPlayer
         private Vector3 _shooterTopPosition;
         private BubbleTile _bubbleTile;
         private IEnumerable<Transform> _hitBubbleTransforms;
+
+        public LevelDataId RestoreLevelID => LevelDataId.BubbleShooter;
 
         public void Init(Vector3 totalGridSize, float horizontalSpacing)
         {
@@ -51,12 +55,23 @@ namespace BubbleShooterSample.LevelPlayer
 
         private void OnEnable()
         {
+            _bubbleShooterModel.onBubbleCountRestored += _bubbleShooterView.UpdateBubbleCount;
+            _bubbleShooterModel.onBubbleCountConsumed += _bubbleShooterView.UpdateBubbleCount;
+
             _bubbleShooterView.onShootBubble += ShootBubble;
         }
 
         private void OnDisable()
         {
+            _bubbleShooterModel.onBubbleCountRestored -= _bubbleShooterView.UpdateBubbleCount;
+            _bubbleShooterModel.onBubbleCountConsumed -= _bubbleShooterView.UpdateBubbleCount;
+
             _bubbleShooterView.onShootBubble -= ShootBubble;
+        }
+
+        public void RestoreLevelData(string dataStr)
+        {
+            _bubbleShooterModel.RestoreLevelData(dataStr);
         }
 
         private void UpdateShooterPosition()
@@ -81,6 +96,12 @@ namespace BubbleShooterSample.LevelPlayer
 
         private void ChargeBubble(TweenCallback OnChargeBubbleComplete)
         {
+            bool consumed = _bubbleShooterModel.ConsumeBubbleCount();
+            if (consumed == false)
+            {
+                return;
+            }
+
             Transform shooterTransform = _bubbleShooterView.CachedTransform;
             Vector3 shooterPosition = shooterTransform.position;
 

@@ -76,14 +76,14 @@ namespace BubbleShooterSample.LevelEditor
         {
             _flowEditorView.UpdateFlowTileType(model.TileIndex, model.TilePosition, model.TileType);
 
-            LevelDataManager.SaveSpecificLevelData(LevelDataId.Flow);
+            LevelDataManager.SaveSpecificLevelData(RestoreLevelID);
         }
 
         internal void CreateFlowTile(Vector2Int index, Vector2 position, FlowTileType type)
         {
             _flowEditorModel.CreateFlowTile(index, position, type, _flowEditorToolUI.PickedColor);
 
-            LevelDataManager.SaveSpecificLevelData(LevelDataId.Flow);
+            LevelDataManager.SaveSpecificLevelData(RestoreLevelID);
         }
 
         public string SaveLevelData()
@@ -111,7 +111,7 @@ namespace BubbleShooterSample.LevelEditor
             _flowEditorModel.RemoveFlowTile(index);
             _flowEditorModel.DeselectFlowTile();
 
-            LevelDataManager.SaveSpecificLevelData(LevelDataId.Flow);
+            LevelDataManager.SaveSpecificLevelData(RestoreLevelID);
         }
 
         internal void UpdateToolType(FlowEditorBrushToolType toolType)

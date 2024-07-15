@@ -37,8 +37,6 @@ namespace BubbleShooterSample.LevelPlayer
             _bubbleShooterPresenter.requestGettingClosestTileInfo += _gridPresenter.GetClosestTileInfo;
             _bubbleShooterPresenter.requestCreatingBubbleTile += _bubblePresenter.CreateBubbleTile;
             _bubbleShooterPresenter.requestAddingBubbleTile += _bubblePresenter.AddBubbleTile;
-
-            _gateKeeperPresenter.requestGridTilePosition += _gridPresenter.GetGridTilePosition;
         }
 
         private void OnDisable()
@@ -54,8 +52,6 @@ namespace BubbleShooterSample.LevelPlayer
             _bubbleShooterPresenter.requestGettingClosestTileInfo -= _gridPresenter.GetClosestTileInfo;
             _bubbleShooterPresenter.requestCreatingBubbleTile -= _bubblePresenter.CreateBubbleTile;
             _bubbleShooterPresenter.requestAddingBubbleTile -= _bubblePresenter.AddBubbleTile;
-
-            _gateKeeperPresenter.requestGridTilePosition -= _gridPresenter.GetGridTilePosition;
         }
 
         protected override void Start()
@@ -67,6 +63,7 @@ namespace BubbleShooterSample.LevelPlayer
             // 카메라 위치가 설정된 이후에 호출되어야 하는 로직들
             _bubbleShooterPresenter.Init(_gridPresenter.GetTotalGridSize(), _gridPresenter.HorizontalSpacing);
             _wallView.Init();
+            _gateKeeperPresenter.Init(_gridPresenter.GetGridTilePosition(new Vector2Int(5, 1)));
         }
     }
 }

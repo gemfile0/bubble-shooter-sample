@@ -8,7 +8,7 @@ namespace BubbleShooterSample
 
         public Transform CachedTransform { get; private set; }
 
-        private void Start()
+        private void Awake()
         {
             CachedTransform = transform;
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace BubbleShooterSample.LevelPlayer
@@ -8,6 +9,7 @@ namespace BubbleShooterSample.LevelPlayer
     {
         [SerializeField] private LineRenderer _guideLineRenderer;
         [SerializeField] private Transform _guideCircleTransform;
+        [SerializeField] private TextMeshPro _bubbleCountText;
 
         public event Action<Vector3> onShootBubble;
 
@@ -45,6 +47,11 @@ namespace BubbleShooterSample.LevelPlayer
             _linePoints = new();
 
             _guideCircleObject = _guideCircleTransform.gameObject;
+        }
+
+        internal void UpdateBubbleCount(int value)
+        {
+            _bubbleCountText.text = value.ToString();
         }
 
         private void Update()

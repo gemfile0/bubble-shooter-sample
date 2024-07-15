@@ -26,8 +26,6 @@ namespace BubbleShooterSample.LevelPlayer
         public void RestoreLevelData(string dataStr)
         {
             _flowModel.RestoreLevelData(dataStr);
-
-
         }
     }
 }

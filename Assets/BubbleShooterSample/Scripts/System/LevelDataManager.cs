@@ -27,7 +27,6 @@ namespace BubbleShooterSample.System
     {
         int CurrentLevel { get; }
         void RestoreLevelData(Action<bool> onRestoringComplete = null);
-        void SaveLevelData();
         void SaveSpecificLevelData(LevelDataId levelDataId);
     }
 

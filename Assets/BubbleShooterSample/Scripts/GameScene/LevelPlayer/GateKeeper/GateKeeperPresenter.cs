@@ -1,5 +1,4 @@
 using DG.Tweening;
-using System;
 using UnityEngine;
 
 namespace BubbleShooterSample
@@ -15,8 +14,6 @@ namespace BubbleShooterSample
         [SerializeField] private float healthSliderDuration = .5f;
         [SerializeField] private Ease healthSliderEase = Ease.OutQuad;
 
-        public event Func<Vector2Int, Vector3> requestGridTilePosition;
-
         private void OnEnable()
         {
             _gateKeeperModel.onHealthPointRestored += _gateKeeperUI.InitHealthSlider;
@@ -29,10 +26,9 @@ namespace BubbleShooterSample
             _gateKeeperModel.onHealthPointChanged -= OnHealthPointChanged;
         }
 
-        private void Start()
+        public void Init(Vector3 gateKeeperPosition)
         {
-            Vector3 gridTilePosition = requestGridTilePosition(new Vector2Int(5, 1));
-            _gateKeeperView.CachedTransform.position = gridTilePosition;
+            _gateKeeperView.CachedTransform.position = gateKeeperPosition;
 
             _gateKeeperModel.Init(50);
         }

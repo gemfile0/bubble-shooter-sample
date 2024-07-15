@@ -6,12 +6,14 @@ namespace BubbleShooterSample.LevelEditor
     {
         [Header("Presenter")]
         [SerializeField] private BubbleShooterEditorPresenter _bubbleShooterEditorPresenter;
+        [SerializeField] private GateKeeperEditorPresenter _gateKeeperEditorPresenter;
 
         protected override void Start()
         {
             base.Start();
 
             _bubbleShooterEditorPresenter.Init(_gridPresenter.GetTotalGridSize(), _gridPresenter.HorizontalSpacing);
+            _gateKeeperEditorPresenter.Init(_gridPresenter.GetGridTilePosition(new Vector2Int(5, 1)));
         }
     }
 }
