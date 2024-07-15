@@ -1493,7 +1493,7 @@ MonoBehaviour:
   _gridPresenter: {fileID: 385280550}
   _flowPresenter: {fileID: 1840337599}
   _bubblePresenter: {fileID: 287588254}
-  _bubbleShooter: {fileID: 1867635652}
+  _bubbleShooterPresenter: {fileID: 1867635652}
   _lootAnimationController: {fileID: 882001974}
   _gateKeeperPresenter: {fileID: 1362961785}
   _wallView: {fileID: 1776097546}
@@ -1551,7 +1551,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1913760725}
   m_Father: {fileID: 2013237498}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1090976622
@@ -2374,12 +2375,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 114eb178a265f7b48bc7928870890d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bubblePresenter: {fileID: 287588254}
   _bubbleShooterData: {fileID: 11400000, guid: 674e4e4ee18706042b9caa23233861bc, type: 2}
-  _shooterTransform: {fileID: 2013237498}
-  _shooterPositionY: -5
-  _guideLineRenderer: {fileID: 476535340}
-  _guideCircleTransform: {fileID: 1133916172}
+  _bubbleShooterModel: {fileID: 1867635653}
+  _bubbleShooterView: {fileID: 2013237500}
 --- !u!114 &1867635653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2419,10 +2417,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.9, y: 1.9, z: 1}
+  m_LocalScale: {x: 0.95, y: 0.95, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2013237498}
+  m_Father: {fileID: 1090976621}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1913760726
 SpriteRenderer:
@@ -2486,6 +2484,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2013237498}
   - component: {fileID: 2013237499}
+  - component: {fileID: 2013237500}
   m_Layer: 0
   m_Name: BubbleShooterView
   m_TagString: Untagged
@@ -2507,7 +2506,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1090976621}
-  - {fileID: 1913760725}
   - {fileID: 476535341}
   - {fileID: 54296368}
   m_Father: {fileID: 1867635651}
@@ -2524,6 +2522,20 @@ SortingGroup:
   m_SortingLayer: 1
   m_SortingOrder: 2
   m_SortAtRoot: 0
+--- !u!114 &2013237500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2013237497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfa202c2292ff894d84ee8da77cb6291, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _guideLineRenderer: {fileID: 476535340}
+  _guideCircleTransform: {fileID: 1133916172}
 --- !u!1001 &3705587056388933254
 PrefabInstance:
   m_ObjectHideFlags: 0

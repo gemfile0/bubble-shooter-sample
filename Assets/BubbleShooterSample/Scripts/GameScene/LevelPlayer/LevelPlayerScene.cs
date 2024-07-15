@@ -5,19 +5,19 @@ namespace BubbleShooterSample.LevelPlayer
 {
     public class LevelPlayerScene : BaseLevelScene
     {
-        [Header("Presenters")]
+        [Header("Presenter")]
         [SerializeField] private FlowPresenter _flowPresenter;
         [SerializeField] private BubblePresenter _bubblePresenter;
-        [SerializeField] private BubbleShooter _bubbleShooter;
+        [SerializeField] private BubbleShooterPresenter _bubbleShooterPresenter;
         [SerializeField] private LootAnimationController _lootAnimationController;
         [SerializeField] private GateKeeperPresenter _gateKeeperPresenter;
 
-        [Header("Views")]
+        [Header("View")]
         [SerializeField] private WallView _wallView;
 
-        [Header("DOTween Settings")]
+        [Header("DOTween Setting")]
         [SerializeField] private int _tweenCapacity = 1000;
-        [SerializeField] private int _sequenceCapacity = 100;
+        [SerializeField] private int _sequenceCapacity = 500;
 
         private void Awake()
         {
@@ -31,10 +31,12 @@ namespace BubbleShooterSample.LevelPlayer
             _bubblePresenter.onBubbleTileDictUpdated += _gridPresenter.OccupyTileSet;
             _bubblePresenter.onBubbleTileAdded += _gridPresenter.OccupyTile;
             _bubblePresenter.onBubbleTileRemoved += _gridPresenter.VacateTile;
-            _bubblePresenter.onBubbleSequeceComplete += _bubbleShooter.SetReadyToShoot;
+            _bubblePresenter.onBubbleSequeceComplete += _bubbleShooterPresenter.SetReadyToShoot;
             _bubblePresenter.requestGettingNeighborIndexList += _gridPresenter.GetNeighborIndexList;
 
-            _bubbleShooter.requestGettingClosestTileInfo += _gridPresenter.GetClosestTileInfo;
+            _bubbleShooterPresenter.requestGettingClosestTileInfo += _gridPresenter.GetClosestTileInfo;
+            _bubbleShooterPresenter.requestCreatingBubbleTile += _bubblePresenter.CreateBubbleTile;
+            _bubbleShooterPresenter.requestAddingBubbleTile += _bubblePresenter.AddBubbleTile;
 
             _gateKeeperPresenter.requestGridTilePosition += _gridPresenter.GetGridTilePosition;
         }
@@ -46,10 +48,12 @@ namespace BubbleShooterSample.LevelPlayer
             _bubblePresenter.onBubbleTileDictUpdated -= _gridPresenter.OccupyTileSet;
             _bubblePresenter.onBubbleTileAdded -= _gridPresenter.OccupyTile;
             _bubblePresenter.onBubbleTileRemoved -= _gridPresenter.VacateTile;
-            _bubblePresenter.onBubbleSequeceComplete -= _bubbleShooter.SetReadyToShoot;
+            _bubblePresenter.onBubbleSequeceComplete -= _bubbleShooterPresenter.SetReadyToShoot;
             _bubblePresenter.requestGettingNeighborIndexList -= _gridPresenter.GetNeighborIndexList;
 
-            _bubbleShooter.requestGettingClosestTileInfo -= _gridPresenter.GetClosestTileInfo;
+            _bubbleShooterPresenter.requestGettingClosestTileInfo -= _gridPresenter.GetClosestTileInfo;
+            _bubbleShooterPresenter.requestCreatingBubbleTile -= _bubblePresenter.CreateBubbleTile;
+            _bubbleShooterPresenter.requestAddingBubbleTile -= _bubblePresenter.AddBubbleTile;
 
             _gateKeeperPresenter.requestGridTilePosition -= _gridPresenter.GetGridTilePosition;
         }
@@ -61,7 +65,7 @@ namespace BubbleShooterSample.LevelPlayer
             base.Start();
 
             // 카메라 위치가 설정된 이후에 호출되어야 하는 로직들
-            _bubbleShooter.Init(_gridPresenter.GetTotalGridSize(), _gridPresenter.HorizontalSpacing);
+            _bubbleShooterPresenter.Init(_gridPresenter.GetTotalGridSize(), _gridPresenter.HorizontalSpacing);
             _wallView.Init();
         }
     }
