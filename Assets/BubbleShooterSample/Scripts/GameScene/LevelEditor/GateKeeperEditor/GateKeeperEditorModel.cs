@@ -16,10 +16,11 @@ namespace BubbleShooterSample.LevelEditor
         public event Action<int> onHealthPointUpdated;
         public event Action<int> onSkinIndexUpdated;
 
-        public int HealthPoint => _healthPoint;
-        private int _healthPoint;
         public int SkinIndex => _skinIndex;
         private int _skinIndex;
+
+        public int HealthPoint => _healthPoint;
+        private int _healthPoint;
 
         internal string SaveLevelData()
         {
@@ -36,10 +37,10 @@ namespace BubbleShooterSample.LevelEditor
             if (string.IsNullOrEmpty(dataStr) == false)
             {
                 GateKeeperSaveData saveData = JsonUtility.FromJson<GateKeeperSaveData>(dataStr);
-                _healthPoint = saveData.healthPoint;
                 _skinIndex = saveData.skinIndex;
+                _healthPoint = saveData.healthPoint;
 
-                onLevelDataRestored?.Invoke(_healthPoint, _skinIndex);
+                onLevelDataRestored?.Invoke(_skinIndex, _healthPoint);
             }
         }
 

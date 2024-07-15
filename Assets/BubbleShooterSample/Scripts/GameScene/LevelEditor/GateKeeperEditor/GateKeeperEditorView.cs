@@ -4,7 +4,7 @@ namespace BubbleShooterSample.LevelEditor
 {
     public class GateKeeperEditorView : MonoBehaviour
     {
-        [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private SpriteRenderer _gateKeeperRenderer;
 
         public Transform CachedTransform { get; private set; }
 
@@ -15,7 +15,7 @@ namespace BubbleShooterSample.LevelEditor
 
         internal void UpdateSkin(Sprite skinSprite)
         {
-            _spriteRenderer.sprite = skinSprite;
+            _gateKeeperRenderer.sprite = skinSprite;
         }
     }
 }

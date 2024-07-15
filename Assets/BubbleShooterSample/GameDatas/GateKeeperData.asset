@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4668db601853e5b46b28d74c91db535d, type: 3}
   m_Name: GateKeeperData
   m_EditorClassIdentifier: 
-  gateKeeperSkinList:
+  _gateKeeperSkinList:
   - {fileID: 21300000, guid: 0092cd80a537fbd4e8ae586a77fb7349, type: 3}
   - {fileID: 21300000, guid: 2ebb456e92f6a8d4fa6cab14389db8b9, type: 3}
   - {fileID: 21300000, guid: 84738105a39bde246a08697f869b96e5, type: 3}
+  _healthSliderDuration: 0.5
+  _healthSliderEase: 6

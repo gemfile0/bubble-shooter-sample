@@ -1843,7 +1843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ceb209e47fea4c488a6d297313b28df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spriteRenderer: {fileID: 7344950588930456997}
+  _gateKeeperRenderer: {fileID: 7344950588930456997}
 --- !u!210 &2285126576656637375
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -2792,7 +2792,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 763348608035659360, guid: b36fa481a448d354d97d2a22b05d55c1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000061035156
+      value: -0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 1565458787128092114, guid: b36fa481a448d354d97d2a22b05d55c1, type: 3}
       propertyPath: m_AnchorMax.y
@@ -2816,6 +2816,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1565458787128092114, guid: b36fa481a448d354d97d2a22b05d55c1, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3585997021668328375, guid: b36fa481a448d354d97d2a22b05d55c1, type: 3}
+      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3899910373892290382, guid: b36fa481a448d354d97d2a22b05d55c1, type: 3}

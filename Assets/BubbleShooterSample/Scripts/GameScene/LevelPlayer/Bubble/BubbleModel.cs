@@ -250,7 +250,7 @@ namespace BubbleShooterSample.LevelPlayer
                     Color tileColor = pair.Key;
                     Vector2 tilePosition = headFlowTileNode.Value.TilePosition;
                     Color bubbleColor = _GetRandomBubbleTileColor();
-                    int attackPoint = UnityEngine.Random.Range(0, 4) == 0 ? 5 : 0; // 1/4 확률로 5점 공격 포인트
+                    int attackPoint = UnityEngine.Random.Range(0, 3) == 0 ? 5 : 0; // 1/3 확률로 5점 공격 포인트
                     BubbleTileModel bubbleTile = new(tileIndex, tilePosition, tileColor, bubbleColor, attackPoint, _currentTurn, headFlowTileNode);
                     _newFlowBubbleList.Add(bubbleTile);
                     _bubbleTileDict.Add(tileIndex, bubbleTile);
