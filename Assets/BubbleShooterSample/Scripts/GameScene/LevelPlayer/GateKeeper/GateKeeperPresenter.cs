@@ -1,36 +1,45 @@
+using BubbleShooterSample.System;
 using DG.Tweening;
 using UnityEngine;
 
 namespace BubbleShooterSample
 {
     public class GateKeeperPresenter : MonoBehaviour,
-        ILootAnimationEndPoint
+        ILootAnimationEndPoint,
+        ILevelRestorable
     {
+        [SerializeField] private GateKeeperData _gateKeeperData;
         [SerializeField] private GateKeeperModel _gateKeeperModel;
 
         [Header("View")]
         [SerializeField] private GateKeeperView _gateKeeperView;
         [SerializeField] private GateKeeperUI _gateKeeperUI;
-        [SerializeField] private float healthSliderDuration = .5f;
-        [SerializeField] private Ease healthSliderEase = Ease.OutQuad;
+
+        public LevelDataId RestoreLevelID => LevelDataId.GateKeeper;
+
+        public void Init(Vector3 gateKeeperPosition)
+        {
+            _gateKeeperView.CachedTransform.position = gateKeeperPosition;
+        }
 
         private void OnEnable()
         {
-            _gateKeeperModel.onHealthPointRestored += _gateKeeperUI.InitHealthSlider;
+            _gateKeeperModel.onLevelDataRestored += OnLevelDataRestored;
             _gateKeeperModel.onHealthPointChanged += OnHealthPointChanged;
         }
 
         private void OnDisable()
         {
-            _gateKeeperModel.onHealthPointRestored -= _gateKeeperUI.InitHealthSlider;
+            _gateKeeperModel.onLevelDataRestored -= OnLevelDataRestored;
             _gateKeeperModel.onHealthPointChanged -= OnHealthPointChanged;
         }
 
-        public void Init(Vector3 gateKeeperPosition)
+        private void OnLevelDataRestored(int skinIndex, int healthPoint)
         {
-            _gateKeeperView.CachedTransform.position = gateKeeperPosition;
-
-            _gateKeeperModel.Init(50);
+            Sprite gateKeeperSprite = _gateKeeperData.GetGateKeeperSprite(skinIndex);
+            _gateKeeperView.UpdateSkin(gateKeeperSprite);
+            _gateKeeperUI.UpdateSkin(gateKeeperSprite);
+            _gateKeeperUI.InitHealthSlider(healthPoint);
         }
 
         public void BeginLootAnimation()
@@ -50,7 +59,14 @@ namespace BubbleShooterSample
 
         private void OnHealthPointChanged(int healthPoint)
         {
+            float healthSliderDuration = _gateKeeperData.HealthSliderDuration;
+            Ease healthSliderEase = _gateKeeperData.HealthSliderEase;
             _gateKeeperUI.UpdateHealthSlider(healthPoint, healthSliderDuration, healthSliderEase);
+        }
+
+        public void RestoreLevelData(string dataStr)
+        {
+            _gateKeeperModel.RestoreLevelData(dataStr);
         }
     }
 }

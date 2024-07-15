@@ -48,10 +48,10 @@ namespace BubbleShooterSample.LevelEditor
             _gateKeeperHealthPointEditorUI.onValueChanged -= OnHealthPointValueChanged;
         }
 
-        private void OnLevelDataRestored(int healthPoint, int skinIndex)
+        private void OnLevelDataRestored(int skinIndex, int healthPoint)
         {
-            OnHealthPointUpdated(healthPoint);
             OnSkinIndexUpdated(skinIndex);
+            OnHealthPointUpdated(healthPoint);
         }
 
         private void OnHealthPointUpdated(int healthPoint)
@@ -62,7 +62,7 @@ namespace BubbleShooterSample.LevelEditor
         private void OnSkinIndexUpdated(int skinIndex)
         {
             _gateKeeperSkinIndexEditorUI.UpdateUI(skinIndex);
-            Sprite gateKeeperSkin = _gateKeeperData.GetGateKeeperSkin(skinIndex);
+            Sprite gateKeeperSkin = _gateKeeperData.GetGateKeeperSprite(skinIndex);
             _gateKeeperEditorView.UpdateSkin(gateKeeperSkin);
         }
 

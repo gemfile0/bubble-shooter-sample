@@ -1904,11 +1904,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf34c33dddfda26419ee77864f7eca7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gateKeeperData: {fileID: 11400000, guid: 0bf6421604755354a9725f322a6c0dcc, type: 2}
   _gateKeeperModel: {fileID: 1362961786}
   _gateKeeperView: {fileID: 1967691197}
   _gateKeeperUI: {fileID: 487069177}
-  healthSliderDuration: 0.5
-  healthSliderEase: 6
 --- !u!114 &1362961786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2592,7 +2591,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 644636eefc64b994a8f0e81ae80c3e87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spriteRenderer: {fileID: 1309099831}
+  _gateKeeperRenderer: {fileID: 1309099831}
 --- !u!210 &1967691198
 SortingGroup:
   m_ObjectHideFlags: 0

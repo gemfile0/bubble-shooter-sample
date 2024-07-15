@@ -1,3 +1,4 @@
+using BubbleShooterSample.LevelEditor;
 using System;
 using UnityEngine;
 
@@ -5,15 +6,22 @@ namespace BubbleShooterSample
 {
     public class GateKeeperModel : MonoBehaviour
     {
-        public event Action<int> onHealthPointRestored;
+        public event Action<int, int> onLevelDataRestored;
         public event Action<int> onHealthPointChanged;
 
+        private int _skinIndex;
         private int _healthPoint;
 
-        internal void Init(int healthPoint)
+        internal void RestoreLevelData(string dataStr)
         {
-            _healthPoint = healthPoint;
-            onHealthPointRestored?.Invoke(_healthPoint);
+            if (string.IsNullOrEmpty(dataStr) == false)
+            {
+                GateKeeperSaveData saveData = JsonUtility.FromJson<GateKeeperSaveData>(dataStr);
+                _skinIndex = saveData.skinIndex;
+                _healthPoint = saveData.healthPoint;
+
+                onLevelDataRestored?.Invoke(_skinIndex, _healthPoint);
+            }
         }
 
         internal void Attack(int attackPoint)

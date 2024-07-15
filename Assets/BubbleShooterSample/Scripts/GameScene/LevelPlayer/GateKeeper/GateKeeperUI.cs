@@ -6,6 +6,7 @@ namespace BubbleShooterSample
 {
     public class GateKeeperUI : MonoBehaviour
     {
+        [SerializeField] private Image _gateKeeperImage;
         [SerializeField] private Slider _healthSlider;
 
         internal void InitHealthSlider(int healthPoint)
@@ -18,6 +19,11 @@ namespace BubbleShooterSample
         {
             _healthSlider.DOValue(healthPoint, sliderDuration)
                          .SetEase(sliderEase);
+        }
+
+        internal void UpdateSkin(Sprite skinSprite)
+        {
+            _gateKeeperImage.sprite = skinSprite;
         }
     }
 }

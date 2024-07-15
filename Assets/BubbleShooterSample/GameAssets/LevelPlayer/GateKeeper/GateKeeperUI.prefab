@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4114786964885330502}
   - component: {fileID: 99081133718431856}
   m_Layer: 0
-  m_Name: WidzardImage
+  m_Name: GateKeepermage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b6caf8b3e3db7849abb18ae798ee482, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gateKeeperImage: {fileID: 99081133718431856}
   _healthSlider: {fileID: 4101110130778785293}
 --- !u!1 &2899973799744292943
 GameObject:
@@ -302,7 +303,7 @@ GameObject:
   - component: {fileID: 1969613921438912300}
   - component: {fileID: 5890831400812776277}
   m_Layer: 0
-  m_Name: KnobCircle
+  m_Name: GateKeeper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
