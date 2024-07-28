@@ -75,8 +75,9 @@ namespace BubbleShooterSample
 
         private void AddIfExists(Vector2Int tileIndex)
         {
-            if (_gridTileIndexSet.Contains(tileIndex)
-                && _visitedIndexSet?.Contains(tileIndex) == false)
+            if (_occupiedTileSet.Contains(tileIndex)
+                && _visitedIndexSet.Contains(tileIndex) == false
+                && _gridTileIndexSet.Contains(tileIndex))
             {
                 _neighborIndexList.Add(tileIndex);
             }
