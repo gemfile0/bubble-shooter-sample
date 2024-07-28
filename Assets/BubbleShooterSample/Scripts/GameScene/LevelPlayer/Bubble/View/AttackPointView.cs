@@ -11,22 +11,29 @@ namespace BubbleShooterSample
         [SerializeField] private Vector2 _delayRange = new Vector2(0f, 0.5f);
 
         public SpriteRenderer SpriteRenderer => _spriteRenderer;
+        public GameObject CachedGameObject { get; private set; }
 
         private Transform _spriteTransform;
         private Vector3 _targetPosition;
 
         public void Init()
         {
+            CachedGameObject = gameObject;
             _spriteTransform = transform;
         }
 
-        private void Start()
+        private void OnEnable()
         {
             StartCoroutine(MoveRandomly());
         }
 
         private IEnumerator MoveRandomly()
         {
+            while (_spriteTransform == null)
+            {
+                yield return null;
+            }
+
             while (true)
             {
                 SetRandomTargetPosition();
@@ -55,6 +62,5 @@ namespace BubbleShooterSample
 
             _targetPosition = new Vector3(x, y, _spriteTransform.localPosition.z);
         }
-
     }
 }

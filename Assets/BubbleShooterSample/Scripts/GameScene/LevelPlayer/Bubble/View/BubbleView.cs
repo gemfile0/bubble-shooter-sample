@@ -27,13 +27,13 @@ namespace BubbleShooterSample.LevelPlayer
             _bubbleTileDict = new();
         }
 
-        public BubbleTile GetOrCreateBubbleTile(int tileIndex, Color bubbleColor, bool hasAttackPoint, Vector2 tilePosition)
+        public BubbleTile GetOrCreateBubbleTile(int tileID, Color bubbleColor, bool hasAttackPoint, Vector2 tilePosition)
         {
-            if (_bubbleTileDict.TryGetValue(tileIndex, out BubbleTile bubbleTile) == false)
+            if (_bubbleTileDict.TryGetValue(tileID, out BubbleTile bubbleTile) == false)
             {
                 //Debug.Log("CreateBubbleTile");
                 bubbleTile = CreateBubbleTile(bubbleColor, hasAttackPoint, tilePosition);
-                _bubbleTileDict.Add(tileIndex, bubbleTile);
+                _bubbleTileDict.Add(tileID, bubbleTile);
             }
 
             return bubbleTile;

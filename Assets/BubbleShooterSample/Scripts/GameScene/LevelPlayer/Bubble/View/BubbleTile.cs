@@ -35,10 +35,10 @@ namespace BubbleShooterSample.LevelPlayer
         private Transform _cachedTransform;
 
         public IEnumerable<SpriteRenderer> SpriteRendererList => _spriteRendererList;
+        private List<SpriteRenderer> _spriteRendererList;
 
         public Color BubbleColor { get; private set; }
 
-        private SpriteRenderer[] _spriteRendererList;
         private float _radius;
         private List<Transform> _hitBubbleTransformList;
         private BubbleTileState _state;
@@ -52,16 +52,24 @@ namespace BubbleShooterSample.LevelPlayer
 
         public void Init(Color bubbleColor, bool hasAttackPoint)
         {
-            _spriteRendererList = GetComponentsInChildren<SpriteRenderer>();
             BubbleColor = bubbleColor;
+
             _spriteRenderer.color = BubbleColor;
+            if (_spriteRendererList == null)
+            {
+                _spriteRendererList = new()
+                {
+                    _spriteRenderer,
+                    _attackPointView.SpriteRenderer
+                };
+            }
             SetRendererAlpha(0f);
 
             _radius = _collider2D.radius * transform.localScale.x;
             _hitBubbleTransformList = new();
 
-            _attackPointView.gameObject.SetActive(hasAttackPoint);
             _attackPointView.Init();
+            _attackPointView.CachedGameObject.SetActive(hasAttackPoint);
 
             SetState(BubbleTileState.Hanging);
         }

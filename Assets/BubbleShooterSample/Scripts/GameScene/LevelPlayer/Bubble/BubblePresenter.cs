@@ -108,7 +108,15 @@ namespace BubbleShooterSample.LevelPlayer
                 Sequence sequence = DOTween.Sequence();
                 float moveDuration = _bubbleData.MoveBubbleDuration;
                 float fadeDuration = _bubbleData.FadeBubbleDuration;
-                //Debug.Log($"FeedBubbles 1 : {tileID}");
+                //if (attackPoint > 0)
+                //{
+                //    Debug.Log($"FeedBubbles 1-1 : {tileID}, {attackPoint}");
+                //}
+                //else
+                //{
+                //    Debug.Log($"FeedBubbles 1-2 : {tileID}");
+                //}
+
                 foreach (BubbleTilePathNode node in tileModel.PathNodeQueue)
                 {
                     int turn = node.Turn;
@@ -162,18 +170,21 @@ namespace BubbleShooterSample.LevelPlayer
                 AddConnectedTileQueue(rootIndex);
             }
 
+            int executionCount = 0;
             while (_connectedTileQueue.Count > 0)
             {
                 Vector2Int current = _connectedTileQueue.Dequeue();
 
                 foreach (Vector2Int neighborIndex in requestGettingNeighborIndexList(current, _connectedIndexSet))
                 {
+                    executionCount += 1;
                     if (_bubbleModel.ContainsBubbleTile(neighborIndex))
                     {
                         AddConnectedTileQueue(neighborIndex);
                     }
                 }
             }
+            Debug.Log($"DropUnconnectedBubbles : {executionCount}");
 
             // 연결되지 않은 버블 제거
             if (_connectedIndexSet.Count != _bubbleModel.BubbleTileDict.Count)
@@ -281,6 +292,7 @@ namespace BubbleShooterSample.LevelPlayer
             AddSameBubbleTileQueue(tileIndex);
 
             Color bubbleColor = _bubbleModel.GetBubbleTileColor(tileIndex);
+            int executionCount = 0;
             while (_sameBubbleTileQueue.Count > 0)
             {
                 Vector2Int current = _sameBubbleTileQueue.Dequeue();
@@ -289,12 +301,14 @@ namespace BubbleShooterSample.LevelPlayer
 
                 foreach (Vector2Int neighborIndex in requestGettingNeighborIndexList(current, _visitedIndexSet))
                 {
+                    executionCount += 1;
                     if (_bubbleModel.GetBubbleTileColor(neighborIndex) == bubbleColor)
                     {
                         AddSameBubbleTileQueue(neighborIndex);
                     }
                 }
             }
+            Debug.Log($"RemoveSameBubbles : {executionCount}");
 
             // 같은 색상의 버블이 3개 이상인 경우 제거
             if (_sameBubbleTileIndexList.Count >= 3)
