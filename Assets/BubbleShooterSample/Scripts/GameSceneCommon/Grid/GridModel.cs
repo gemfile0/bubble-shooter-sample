@@ -8,7 +8,7 @@ namespace BubbleShooterSample
         public IEnumerable<Vector2Int> GridTileIndexSet => _gridTileIndexSet;
         private HashSet<Vector2Int> _gridTileIndexSet;
 
-        public IEnumerable<Vector2Int> OccupiedTileSet => _occupiedTileSet;
+        public ICollection<Vector2Int> OccupiedTileSet => _occupiedTileSet;
         private HashSet<Vector2Int> _occupiedTileSet;
         private List<Vector2Int> _neighborIndexList;
         private HashSet<Vector2Int> _visitedIndexSet;
